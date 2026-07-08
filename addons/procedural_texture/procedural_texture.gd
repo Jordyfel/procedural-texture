@@ -2,8 +2,8 @@
 class_name ProceduralTexture
 extends Texture2D
 
-@export_storage var height:= 1
-@export_storage var width:= 1
+@export_storage var height:= 2
+@export_storage var width:= 2
 @export_storage var color:= Color.WHITE
 
 @export_storage var root_node: TextureNode
