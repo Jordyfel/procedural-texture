@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ck717dp7o5kue"]
 
-[ext_resource type="Script" uid="uid://0eu0skewaw3j" path="res://addons/procedural_texture/procedural_texture_editor.gd" id="1_dxhmh"]
+[ext_resource type="Script" uid="uid://0eu0skewaw3j" path="res://addons/procedural_texture/editor/procedural_texture_editor.gd" id="1_dxhmh"]
 
 [node name="ProceduralTextureEditor" type="EditorDock" unique_id=1162757015]
 offset_right = 800.0
