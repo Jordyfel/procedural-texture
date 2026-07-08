@@ -1,0 +1,51 @@
+[gd_scene format=3 uid="uid://ck717dp7o5kue"]
+
+[ext_resource type="Script" uid="uid://0eu0skewaw3j" path="res://addons/procedural_texture/procedural_texture_editor.gd" id="1_dxhmh"]
+
+[node name="ProceduralTextureEditor" type="EditorDock" unique_id=1162757015]
+offset_right = 800.0
+offset_bottom = 160.0
+title = "Procedural Texture"
+global = false
+transient = true
+default_slot = 8
+available_layouts = 6
+script = ExtResource("1_dxhmh")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1767913808]
+layout_mode = 2
+
+[node name="HBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=590091967]
+layout_mode = 2
+
+[node name="VBoxContainer" type="HBoxContainer" parent="HBoxContainer/HBoxContainer" unique_id=1080345601]
+layout_mode = 2
+
+[node name="AddButton" type="Button" parent="HBoxContainer/HBoxContainer/VBoxContainer" unique_id=87496166]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Add"
+
+[node name="RemoveButton" type="Button" parent="HBoxContainer/HBoxContainer/VBoxContainer" unique_id=50119004]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Remove"
+
+[node name="Tree" type="Tree" parent="HBoxContainer/HBoxContainer" unique_id=498025103]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer" unique_id=403092471]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 6
+expand_mode = 3
+stretch_mode = 5
+
+[connection signal="pressed" from="HBoxContainer/HBoxContainer/VBoxContainer/AddButton" to="." method="_on_add_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/HBoxContainer/VBoxContainer/RemoveButton" to="." method="_on_remove_button_pressed"]
+[connection signal="item_selected" from="HBoxContainer/HBoxContainer/Tree" to="." method="_on_tree_item_selected"]
+[connection signal="gui_input" from="HBoxContainer/TextureRect" to="." method="_on_texture_rect_gui_input"]
+[connection signal="mouse_exited" from="HBoxContainer/TextureRect" to="." method="_on_texture_rect_mouse_exited"]
