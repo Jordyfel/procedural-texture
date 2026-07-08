@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b5ogxb8e5cmdg" path="res://addons/procedural_texture/texture_node.gd" id="1_hxbq4"]
 [ext_resource type="Script" uid="uid://bswd55yofyxs3" path="res://addons/procedural_texture/shapes/circle_shape.gd" id="2_oldk3"]
-[ext_resource type="Shader" uid="uid://6pirh5nhgauc" path="res://addons/procedural_texture/shapes/circle_shape.gdshader" id="3_kb2a5"]
+[ext_resource type="Shader" uid="uid://6pirh5nhgauc" path="res://addons/procedural_texture/shapes/circle.gdshader" id="3_kb2a5"]
 [ext_resource type="Script" uid="uid://bc4v7ap0o4u6n" path="res://addons/procedural_texture/procedural_texture.gd" id="4_8goht"]
 
 [sub_resource type="Resource" id="Resource_oldk3"]

@@ -1,6 +1,3 @@
-shader_type texture_blit;
-render_mode blend_premul_alpha;
-
 uniform bool outline_enabled;
 uniform float outline_width;
 uniform vec4 outline_color : source_color;
@@ -32,15 +29,11 @@ float fill(float gradient, float offset) {
 	return fill;
 }
 
-float sd_circle(vec2 uv) {
-    return length(uv) - 0.5;
-}
-
-void blit() {
+vec4 draw_shape(float sd) {
 	vec4 color;
 
-	// Get a gradient from the SDF.
-	float gradient = clamp(-sd_circle(UV - vec2(0.5)), 0.0, 1.0);
+	// Get a gradient from the signed distance.
+	float gradient = clamp(-sd, 0.0, 1.0);
 
 	if (outline_enabled) {
 		float mask = outline(gradient, 0.01);
@@ -63,5 +56,5 @@ void blit() {
 	}
 
 	color.rgb = linear_to_srgb(color.rgb);
-	COLOR0 = vec4(color);
+	return color;
 }
