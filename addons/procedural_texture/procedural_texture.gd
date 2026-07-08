@@ -2,8 +2,9 @@
 class_name ProceduralTexture
 extends Texture2D
 
-@export_storage var height:= 256
-@export_storage var width:= 256
+@export_storage var height:= 1
+@export_storage var width:= 1
+@export_storage var color:= Color.WHITE
 
 @export_storage var root_node: TextureNode
 
@@ -17,21 +18,37 @@ func _init() -> void:
 	image.fill(Color.WHITE)
 	dummy_source = RenderingServer.texture_2d_create(image)
 	default_material = RenderingServer.texture_drawable_get_default_material()
+	root_texture = dummy_source
+
+
+func setup() -> void:
+	root_node = TextureNode.new()
+	_initialize()
+
+
+func _initialize() -> void:
 	root_texture = RenderingServer.texture_drawable_create(
-		height,
 		width,
+		height,
 		RenderingServer.TEXTURE_DRAWABLE_FORMAT_RGBA8,
-		Color.WHITE
+		color
 	)
+
+	root_node.texture = root_texture
+
+	for node in root_node.children:
+		node.changed.connect(update)
+
+	update()
 
 
 func update() -> void:
 	# Clear the main texture.
 	RenderingServer.texture_drawable_blit_rect(
 		[root_node.texture],
-		Rect2i(Vector2i.ZERO, Vector2i(height, width)),
+		Rect2i(Vector2i.ZERO, Vector2i(width, height)),
 		default_material,
-		Color.WHITE,
+		color,
 		[dummy_source]
 	)
 
@@ -43,8 +60,8 @@ func update() -> void:
 
 		# FIXME: Completely untested.
 		node.texture = RenderingServer.texture_drawable_create(
-			_get_height(),
 			_get_width(),
+			_get_height(),
 			RenderingServer.TEXTURE_DRAWABLE_FORMAT_RGBA8,
 			Color.WHITE
 		)
@@ -78,11 +95,12 @@ func update() -> void:
 func _notification(what: int) -> void:
 	match what:
 		NOTIFICATION_RESOURCE_DESERIALIZED:
-			root_node.texture = root_texture
+			if root_node.texture.is_valid():
+				return
+
+			_initialize()
 			RenderingServer.texture_set_path(root_texture, get_path())
-			update()
-			for node in root_node.children:
-				node.changed.connect(update)
+
 		NOTIFICATION_PREDELETE:
 			RenderingServer.free_rid(dummy_source)
 			RenderingServer.free_rid(default_material)
@@ -90,8 +108,7 @@ func _notification(what: int) -> void:
 
 
 func _reset_state() -> void:
-	for node in root_node.children:
-		node.changed.disconnect(update)
+	pass
 
 
 func _get_height() -> int:

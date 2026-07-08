@@ -15,11 +15,10 @@ func edit(procedural_texture: ProceduralTexture) -> void:
 		return
 
 	texture = procedural_texture
+	tree.clear()
 
-	# TODO: Move to factory method?
 	if texture.root_node == null:
-		texture.root_node = TextureNode.new()
-		texture.root_node.texture = texture.root_texture
+		texture.setup()
 
 	texture_rect.texture = texture
 	var tree_root:= tree.create_item()
