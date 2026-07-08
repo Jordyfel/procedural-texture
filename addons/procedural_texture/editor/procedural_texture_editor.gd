@@ -19,12 +19,12 @@ func edit(procedural_texture: ProceduralTexture) -> void:
 		return
 
 	texture = procedural_texture
-	tree.clear()
 
 	if texture.root_node == null:
 		texture.setup()
 
 	texture_rect.texture = texture
+	tree.clear()
 	var tree_root:= tree.create_item()
 	tree_root.set_text(0, "Procedural Texture")
 	for node in texture.root_node.children:
