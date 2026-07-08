@@ -1,52 +1,10 @@
 [gd_scene format=3 uid="uid://d13u2tj4fkmcq"]
 
-[ext_resource type="Script" uid="uid://b5ogxb8e5cmdg" path="res://addons/procedural_texture/texture_node.gd" id="1_hxbq4"]
-[ext_resource type="Script" uid="uid://bswd55yofyxs3" path="res://addons/procedural_texture/shapes/circle_shape.gd" id="2_oldk3"]
-[ext_resource type="Shader" uid="uid://6pirh5nhgauc" path="res://addons/procedural_texture/shapes/circle.gdshader" id="3_kb2a5"]
-[ext_resource type="Script" uid="uid://bc4v7ap0o4u6n" path="res://addons/procedural_texture/procedural_texture.gd" id="4_8goht"]
-
-[sub_resource type="Resource" id="Resource_oldk3"]
-script = ExtResource("2_oldk3")
-outline_enabled = true
-outline_width = 2.18
-outline_color = Color(0.26657522, 0.2665752, 0.2665752, 1)
-fill_enabled = true
-fill_color = Color(0.7990253, 0.16217709, 0.35430744, 1)
-position = Vector2(171.65892, 95.25581)
-shader = ExtResource("3_kb2a5")
-
-[sub_resource type="Resource" id="Resource_kb2a5"]
-script = ExtResource("2_oldk3")
-radius = 90.84
-outline_enabled = true
-outline_width = 4.0
-outline_color = Color(0.38088256, 0.45691592, 0.9204351, 1)
-fill_enabled = true
-fill_color = Color(0.88371444, 0.36491194, 0.42151272, 1)
-position = Vector2(86.325584, 114.10853)
-shader = ExtResource("3_kb2a5")
-
-[sub_resource type="Resource" id="Resource_hx244"]
-script = ExtResource("2_oldk3")
-radius = 27.96
-fill_enabled = true
-position = Vector2(193.48837, 116.093025)
-shader = ExtResource("3_kb2a5")
-
-[sub_resource type="Resource" id="Resource_ndh1u"]
-script = ExtResource("1_hxbq4")
-children = Array[ExtResource("1_hxbq4")]([SubResource("Resource_oldk3"), SubResource("Resource_kb2a5"), SubResource("Resource_hx244")])
-
-[sub_resource type="Texture2D" id="Texture2D_ifdqg"]
-resource_local_to_scene = false
-resource_name = ""
-script = ExtResource("4_8goht")
-root_node = SubResource("Resource_ndh1u")
-metadata/_custom_type_script = "uid://bc4v7ap0o4u6n"
+[ext_resource type="Texture2D" uid="uid://brdenld8m44rl" path="res://addons/procedural_texture/test/test_procedural_texture.tres" id="1_lelyu"]
 
 [node name="TestScene" type="Node2D" unique_id=60759216]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=384501444]
 position = Vector2(300, 20)
-texture = SubResource("Texture2D_ifdqg")
+texture = ExtResource("1_lelyu")
 centered = false

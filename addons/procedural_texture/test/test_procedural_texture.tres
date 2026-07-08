@@ -1,0 +1,45 @@
+[gd_resource type="Texture2D" script_class="ProceduralTexture" format=3 uid="uid://brdenld8m44rl"]
+
+[ext_resource type="Script" uid="uid://b5ogxb8e5cmdg" path="res://addons/procedural_texture/texture_node.gd" id="1_11slx"]
+[ext_resource type="Script" uid="uid://bswd55yofyxs3" path="res://addons/procedural_texture/shapes/circle_shape.gd" id="2_3obym"]
+[ext_resource type="Shader" uid="uid://6pirh5nhgauc" path="res://addons/procedural_texture/shapes/circle.gdshader" id="3_le2ur"]
+[ext_resource type="Script" uid="uid://bc4v7ap0o4u6n" path="res://addons/procedural_texture/procedural_texture.gd" id="4_oafep"]
+
+[sub_resource type="Resource" id="Resource_oldk3"]
+script = ExtResource("2_3obym")
+outline_enabled = true
+outline_width = 2.18
+outline_color = Color(0.26657522, 0.2665752, 0.2665752, 1)
+fill_enabled = true
+fill_color = Color(0.7990253, 0.16217709, 0.35430744, 1)
+position = Vector2(165.70543, 88.310074)
+shader = ExtResource("3_le2ur")
+
+[sub_resource type="Resource" id="Resource_kb2a5"]
+script = ExtResource("2_3obym")
+radius = 90.84
+outline_enabled = true
+outline_width = 4.0
+outline_color = Color(0.38088256, 0.45691592, 0.9204351, 1)
+fill_enabled = true
+fill_color = Color(0.88371444, 0.36491194, 0.42151272, 1)
+position = Vector2(86.325584, 114.10853)
+shader = ExtResource("3_le2ur")
+
+[sub_resource type="Resource" id="Resource_hx244"]
+script = ExtResource("2_3obym")
+radius = 27.96
+fill_enabled = true
+position = Vector2(193.48837, 116.093025)
+shader = ExtResource("3_le2ur")
+
+[sub_resource type="Resource" id="Resource_ndh1u"]
+script = ExtResource("1_11slx")
+children = Array[ExtResource("1_11slx")]([SubResource("Resource_oldk3"), SubResource("Resource_kb2a5"), SubResource("Resource_hx244")])
+
+[resource]
+resource_local_to_scene = false
+resource_name = ""
+script = ExtResource("4_oafep")
+root_node = SubResource("Resource_ndh1u")
+metadata/_custom_type_script = "uid://bc4v7ap0o4u6n"
