@@ -5,6 +5,6 @@
 [node name="TestScene" type="Node2D" unique_id=60759216]
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=384501444]
-position = Vector2(300, 20)
+position = Vector2(309, 26)
 texture = ExtResource("1_lelyu")
 centered = false

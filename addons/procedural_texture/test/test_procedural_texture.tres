@@ -5,41 +5,34 @@
 [ext_resource type="Shader" uid="uid://6pirh5nhgauc" path="res://addons/procedural_texture/shapes/circle.gdshader" id="3_le2ur"]
 [ext_resource type="Script" uid="uid://bc4v7ap0o4u6n" path="res://addons/procedural_texture/procedural_texture.gd" id="4_oafep"]
 
-[sub_resource type="Resource" id="Resource_oldk3"]
+[sub_resource type="Resource" id="Resource_11slx"]
 script = ExtResource("2_3obym")
-outline_enabled = true
-outline_width = 2.18
-outline_color = Color(0.26657522, 0.2665752, 0.2665752, 1)
 fill_enabled = true
-fill_color = Color(0.7990253, 0.16217709, 0.35430744, 1)
-position = Vector2(165.70543, 88.310074)
+fill_color = Color(0.28118682, 0.28118688, 0.28118682, 1)
+position = Vector2(71.73627, 150.5055)
 shader = ExtResource("3_le2ur")
 
 [sub_resource type="Resource" id="Resource_kb2a5"]
 script = ExtResource("2_3obym")
-radius = 90.84
+radius = 80.0
 outline_enabled = true
 outline_width = 4.0
-outline_color = Color(0.38088256, 0.45691592, 0.9204351, 1)
+outline_color = Color(0.33667842, 0.41025493, 0.8943843, 1)
 fill_enabled = true
-fill_color = Color(0.88371444, 0.36491194, 0.42151272, 1)
-position = Vector2(86.325584, 114.10853)
-shader = ExtResource("3_le2ur")
-
-[sub_resource type="Resource" id="Resource_hx244"]
-script = ExtResource("2_3obym")
-radius = 27.96
-fill_enabled = true
-position = Vector2(193.48837, 116.093025)
+fill_color = Color(0.9779369, 0.97793704, 0.9779369, 1)
+position = Vector2(160.35165, 123.78022)
 shader = ExtResource("3_le2ur")
 
 [sub_resource type="Resource" id="Resource_ndh1u"]
 script = ExtResource("1_11slx")
-children = Array[ExtResource("1_11slx")]([SubResource("Resource_oldk3"), SubResource("Resource_kb2a5"), SubResource("Resource_hx244")])
+children = Array[ExtResource("1_11slx")]([SubResource("Resource_11slx"), SubResource("Resource_kb2a5")])
 
 [resource]
 resource_local_to_scene = false
 resource_name = ""
 script = ExtResource("4_oafep")
+height = 256
+width = 256
+background_color = Color(0.6052743, 0.6052743, 0.6052743, 1)
 root_node = SubResource("Resource_ndh1u")
 metadata/_custom_type_script = "uid://bc4v7ap0o4u6n"
