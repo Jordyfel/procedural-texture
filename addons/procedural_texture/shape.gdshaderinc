@@ -52,6 +52,7 @@ vec4 draw_shape(float sd) {
 			vec4 fill = vec4(fill_color.rgb, fill_color.a * mask);
 			fill.rgb *= fill.a;
 			color = blend_premult_alpha(color, fill);
+			color.rgb *= color.a;
 		}
 	}
 
