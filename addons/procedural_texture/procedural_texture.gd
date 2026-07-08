@@ -2,22 +2,34 @@
 class_name ProceduralTexture
 extends Texture2D
 
-@export_storage var height:= 2
-@export_storage var width:= 2
-@export_storage var color:= Color.WHITE
+@export var height:= 2:
+	set(value):
+		height = value
+		_on_size_changed()
+
+@export var width:= 2:
+	set(value):
+		width = value
+		_on_size_changed()
+
+@export var background_color:= Color.WHITE:
+	set(value):
+		background_color = value
+		emit_changed()
 
 @export_storage var root_node: TextureNode
 
 var root_texture: RID
-var default_material: RID
 var dummy_source: RID
+
+var default_material:= BlitMaterial.new()
 
 
 func _init() -> void:
 	var image:= Image.create_empty(2, 2, false, Image.Format.FORMAT_RGBA8)
 	image.fill(Color.WHITE)
 	dummy_source = RenderingServer.texture_2d_create(image)
-	default_material = RenderingServer.texture_drawable_get_default_material()
+	default_material.blend_mode = BlitMaterial.BLEND_MODE_DISABLED
 	root_texture = dummy_source
 
 
@@ -31,15 +43,32 @@ func _initialize() -> void:
 		width,
 		height,
 		RenderingServer.TEXTURE_DRAWABLE_FORMAT_RGBA8,
-		color
+		background_color
 	)
 
 	root_node.texture = root_texture
 
+	changed.connect(update)
 	for node in root_node.children:
 		node.changed.connect(update)
 
 	update()
+
+
+func _on_size_changed() -> void:
+	if root_node == null or not root_node.texture.is_valid():
+		return
+
+	var new_texture:= RenderingServer.texture_drawable_create(
+		width,
+		height,
+		RenderingServer.TEXTURE_DRAWABLE_FORMAT_RGBA8,
+		background_color
+	)
+
+	RenderingServer.texture_replace(root_texture, new_texture)
+
+	emit_changed()
 
 
 func update() -> void:
@@ -47,8 +76,8 @@ func update() -> void:
 	RenderingServer.texture_drawable_blit_rect(
 		[root_node.texture],
 		Rect2i(Vector2i.ZERO, Vector2i(width, height)),
-		default_material,
-		color,
+		default_material.get_rid(),
+		background_color,
 		[dummy_source]
 	)
 
@@ -103,7 +132,6 @@ func _notification(what: int) -> void:
 
 		NOTIFICATION_PREDELETE:
 			RenderingServer.free_rid(dummy_source)
-			RenderingServer.free_rid(default_material)
 			RenderingServer.free_rid(root_texture)
 
 
