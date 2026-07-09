@@ -25,6 +25,6 @@ func get_stops() -> PackedFloat32Array:
 			var stop:= stops[i]
 			stops_[i] = stop.stop
 		else:
-			stops_[i] = 0.0
+			stops_[i] = 100.0
 
 	return stops_

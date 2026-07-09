@@ -7,23 +7,23 @@
 [ext_resource type="Script" uid="uid://bc4v7ap0o4u6n" path="res://addons/procedural_texture/procedural_texture.gd" id="4_oafep"]
 [ext_resource type="Script" uid="uid://darr1s84rm8n" path="res://addons/procedural_texture/color/oklch_stop.gd" id="5_oafep"]
 
-[sub_resource type="Resource" id="Resource_le2ur"]
-script = ExtResource("4_le2ur")
-
-[sub_resource type="Resource" id="Resource_11slx"]
-script = ExtResource("2_3obym")
-fill_enabled = true
-fill_color = Color(0.28118682, 0.28118688, 0.28118682, 1)
-fill_gradient = SubResource("Resource_le2ur")
-position = Vector2(33.758244, 129.4066)
-shader = ExtResource("3_le2ur")
-
 [sub_resource type="Resource" id="Resource_likkg"]
 script = ExtResource("5_oafep")
+color = Color(0.60424244, 0.5731917, 0.23936768, 1)
+l = 0.65
+c = 0.107
+h = 104.0
+a = 1.0
 metadata/_custom_type_script = "uid://darr1s84rm8n"
 
 [sub_resource type="Resource" id="Resource_xsa8s"]
 script = ExtResource("5_oafep")
+color = Color(0.023297539, 0.1194282, -0.07590554, 1)
+l = 0.205
+c = 0.147
+h = 126.0
+a = 1.0
+stop = 0.597
 metadata/_custom_type_script = "uid://darr1s84rm8n"
 
 [sub_resource type="Resource" id="Resource_lelyu"]
@@ -33,19 +33,29 @@ metadata/_custom_type_script = "uid://ltvetito3wa0"
 
 [sub_resource type="Resource" id="Resource_kb2a5"]
 script = ExtResource("2_3obym")
-radius = 80.0
-outline_enabled = true
+radius = 52.1
 outline_width = 4.0
-outline_color = Color(0.33667842, 0.41025493, 0.8943843, 1)
+outline_color = Color(0.30588236, 0.37254903, 0.8627451, 1)
 fill_enabled = true
-fill_color = Color(0.9779369, 0.97793704, 0.9779369, 1)
+fill_use_gradient = true
 fill_gradient = SubResource("Resource_lelyu")
-position = Vector2(149.0989, 119.56044)
+position = Vector2(157.53847, 129.4066)
+shader = ExtResource("3_le2ur")
+
+[sub_resource type="Resource" id="Resource_le2ur"]
+script = ExtResource("4_le2ur")
+
+[sub_resource type="Resource" id="Resource_11slx"]
+script = ExtResource("2_3obym")
+fill_enabled = true
+fill_color = Color(0.28118682, 0.28118688, 0.28118682, 1)
+fill_gradient = SubResource("Resource_le2ur")
+position = Vector2(42.197803, 154.72528)
 shader = ExtResource("3_le2ur")
 
 [sub_resource type="Resource" id="Resource_ndh1u"]
 script = ExtResource("1_11slx")
-children = Array[ExtResource("1_11slx")]([SubResource("Resource_11slx"), SubResource("Resource_kb2a5")])
+children = Array[ExtResource("1_11slx")]([SubResource("Resource_kb2a5"), SubResource("Resource_11slx")])
 
 [resource]
 resource_local_to_scene = false
