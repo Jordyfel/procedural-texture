@@ -1,5 +1,9 @@
 #include "res://addons/procedural_texture/color/oklch.gdshaderinc"
 
+const int MAX_STOPS = 8;
+const float STOP_UNSET = 10.0;
+const float EDGE_OFFSET = 0.01;
+
 uniform bool outline_enabled;
 uniform float outline_width;
 uniform vec4 outline_color : source_color;
@@ -8,8 +12,8 @@ uniform float outline_smoothstep;
 uniform bool fill_enabled;
 uniform vec4 fill_color : source_color;
 uniform bool fill_use_gradient;
-uniform vec4 fill_gradient_colors[8];
-uniform float fill_gradient_stops[8];
+uniform vec4 fill_gradient_colors[MAX_STOPS];
+uniform float fill_gradient_stops[MAX_STOPS];
 uniform float fill_smoothstep;
 
 vec3 linear_to_srgb(vec3 color) {
@@ -47,8 +51,8 @@ vec4 fill_gradient(float gradient) {
 	if (next_stop_index == 0) { // First color.
 		color = vec4(fill_gradient_colors[0]);
 	} else if (next_stop_index == -1) { // Last Color when full.
-		color = vec4(fill_gradient_colors[7]);
-	} else if (fill_gradient_stops[next_stop_index] > 10.0) { // Last Color when not full.
+		color = vec4(fill_gradient_colors[MAX_STOPS - 1]);
+	} else if (fill_gradient_stops[next_stop_index] > STOP_UNSET) { // Last Color when not full.
 		color = vec4(fill_gradient_colors[next_stop_index - 1]);
 	} else { // Interpolate.
 		float prev_stop = fill_gradient_stops[next_stop_index - 1];
@@ -72,16 +76,16 @@ vec4 draw_shape(float sd) {
 
 	if (outline_enabled) {
 		color = outline_color;
-		color.a *= outline_mask(gradient, 0.01);
+		color.a *= outline_mask(gradient, EDGE_OFFSET);
 	}
 
 	if (fill_enabled) {
 		if (!outline_enabled) {
 			color = fill_use_gradient ? fill_gradient(gradient) : fill_color;
-			color.a *= fill_mask(gradient, 0.01);
+			color.a *= fill_mask(gradient, EDGE_OFFSET);
 		} else { // If both fill and outline are enabled, blend the outline over the fill.
 			vec4 fill_result = fill_use_gradient ? fill_gradient(gradient) : fill_color;
-			float offset = 0.01 + outline_width / 2.0;
+			float offset = EDGE_OFFSET + outline_width / 2.0;
 			fill_result.a *= fill_mask(gradient, offset);
 
 			color.rgb *= color.a;
