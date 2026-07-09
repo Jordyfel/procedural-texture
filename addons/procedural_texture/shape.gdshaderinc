@@ -20,16 +20,18 @@ vec4 blend_premult_alpha(vec4 src, vec4 dst) {
 	return vec4(src.rgb + dst.rgb * (1.0 - src.a), src.a + dst.a * (1.0 - src.a));
 }
 
-float outline(float gradient, float offset) {
-	float outline = smoothstep(offset, offset + outline_smoothstep, gradient);
+vec4 outline(float gradient, float offset) {
+	float mask = smoothstep(offset, offset + outline_smoothstep, gradient);
 	float outline_inner = outline_width + offset;
-	outline *= smoothstep(outline_inner + outline_smoothstep, outline_inner, gradient);
-	return outline;
+	mask *= smoothstep(outline_inner + outline_smoothstep, outline_inner, gradient);
+	float a = outline_color.a * mask;
+	return vec4(outline_color.rgb * a, a);
 }
 
-float fill(float gradient, float offset) {
-	float fill = smoothstep(offset, offset + fill_smoothstep, gradient);
-	return fill;
+vec4 fill(float gradient, float offset) {
+	float mask = smoothstep(offset, offset + fill_smoothstep, gradient);
+	float a = fill_color.a * mask;
+	return vec4(fill_color.rgb * a, a);
 }
 
 vec4 draw_shape(float sd) {
@@ -39,21 +41,15 @@ vec4 draw_shape(float sd) {
 	float gradient = clamp(-sd, 0.0, 1.0);
 
 	if (outline_enabled) {
-		float mask = outline(gradient, 0.01);
-		color.a = outline_color.a * mask;
-		color.rgb = outline_color.rgb * color.a;
+		color = outline(gradient, 0.01);
 	}
 
 	if (fill_enabled) {
 		if (!outline_enabled) {
-			float mask = fill(gradient, 0.01);
-			color.a = fill_color.a * mask;
-			color.rgb = fill_color.rgb * color.a;
+			color = fill(gradient, 0.01);
 		} else { // If both fill and outline are enabled, blend the outline over the fill.
 			float offset = 0.01 + outline_width / 2.0;
-			float mask = fill(gradient, offset);
-			vec4 fill = vec4(fill_color.rgb, fill_color.a * mask);
-			fill.rgb *= fill.a;
+			vec4 fill = fill(gradient, offset);
 			color = blend_premult_alpha(color, fill);
 			color.rgb *= color.a;
 		}
