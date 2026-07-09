@@ -59,6 +59,7 @@ func _on_texture_rect_mouse_exited() -> void:
 
 func _on_add_button_pressed() -> void:
 	var new_node:= CircleShape.new()
+	new_node.setup()
 	texture.root_node.children.append(new_node)
 	new_node.changed.connect(texture.update)
 	texture.update()

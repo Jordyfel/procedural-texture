@@ -19,7 +19,7 @@ var material: RID
 var texture: RID
 
 
-func _init() -> void:
+func setup() -> void:
 	var name = _get_name()
 	if name.is_empty(): # Is root.
 		return
@@ -27,11 +27,21 @@ func _init() -> void:
 	const SHAPE_PATH = "res://addons/procedural_texture/shapes/"
 	shader = load(SHAPE_PATH + name.to_lower() + ".gdshader")
 
+	_initialize()
+
+
+func _initialize() -> void:
 	material = RenderingServer.material_create()
 	RenderingServer.material_set_shader(material, shader.get_rid())
 
 
 func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESOURCE_DESERIALIZED:
+		if _get_name().is_empty() or material.is_valid(): # Is root or is initialized.
+			return
+
+		_initialize()
+
 	if what == NOTIFICATION_PREDELETE and material.is_valid():
 		RenderingServer.free_rid(material)
 
