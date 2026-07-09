@@ -1,6 +1,6 @@
 @tool
 class_name Oklch
-extends Node
+extends RefCounted
 
 var l: float
 var c: float
