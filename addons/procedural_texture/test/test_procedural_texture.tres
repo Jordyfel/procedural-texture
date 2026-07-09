@@ -3,14 +3,33 @@
 [ext_resource type="Script" uid="uid://b5ogxb8e5cmdg" path="res://addons/procedural_texture/texture_node.gd" id="1_11slx"]
 [ext_resource type="Script" uid="uid://bswd55yofyxs3" path="res://addons/procedural_texture/shapes/circle_shape.gd" id="2_3obym"]
 [ext_resource type="Shader" uid="uid://6pirh5nhgauc" path="res://addons/procedural_texture/shapes/circle.gdshader" id="3_le2ur"]
+[ext_resource type="Script" uid="uid://ltvetito3wa0" path="res://addons/procedural_texture/color/oklch_gradient.gd" id="4_le2ur"]
 [ext_resource type="Script" uid="uid://bc4v7ap0o4u6n" path="res://addons/procedural_texture/procedural_texture.gd" id="4_oafep"]
+[ext_resource type="Script" uid="uid://darr1s84rm8n" path="res://addons/procedural_texture/color/oklch_stop.gd" id="5_oafep"]
+
+[sub_resource type="Resource" id="Resource_le2ur"]
+script = ExtResource("4_le2ur")
 
 [sub_resource type="Resource" id="Resource_11slx"]
 script = ExtResource("2_3obym")
 fill_enabled = true
 fill_color = Color(0.28118682, 0.28118688, 0.28118682, 1)
-position = Vector2(71.73627, 150.5055)
+fill_gradient = SubResource("Resource_le2ur")
+position = Vector2(33.758244, 129.4066)
 shader = ExtResource("3_le2ur")
+
+[sub_resource type="Resource" id="Resource_likkg"]
+script = ExtResource("5_oafep")
+metadata/_custom_type_script = "uid://darr1s84rm8n"
+
+[sub_resource type="Resource" id="Resource_xsa8s"]
+script = ExtResource("5_oafep")
+metadata/_custom_type_script = "uid://darr1s84rm8n"
+
+[sub_resource type="Resource" id="Resource_lelyu"]
+script = ExtResource("4_le2ur")
+stops = Array[ExtResource("5_oafep")]([SubResource("Resource_likkg"), SubResource("Resource_xsa8s")])
+metadata/_custom_type_script = "uid://ltvetito3wa0"
 
 [sub_resource type="Resource" id="Resource_kb2a5"]
 script = ExtResource("2_3obym")
@@ -20,7 +39,8 @@ outline_width = 4.0
 outline_color = Color(0.33667842, 0.41025493, 0.8943843, 1)
 fill_enabled = true
 fill_color = Color(0.9779369, 0.97793704, 0.9779369, 1)
-position = Vector2(160.35165, 123.78022)
+fill_gradient = SubResource("Resource_lelyu")
+position = Vector2(149.0989, 119.56044)
 shader = ExtResource("3_le2ur")
 
 [sub_resource type="Resource" id="Resource_ndh1u"]

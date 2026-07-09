@@ -5,6 +5,9 @@ uniform float outline_smoothstep;
 
 uniform bool fill_enabled;
 uniform vec4 fill_color : source_color;
+uniform bool fill_use_gradient;
+uniform vec4 fill_gradient_colors[8];
+uniform vec4 fill_gradient_stops[8];
 uniform float fill_smoothstep;
 
 vec3 linear_to_srgb(vec3 color) {

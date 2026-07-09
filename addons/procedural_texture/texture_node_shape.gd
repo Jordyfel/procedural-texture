@@ -35,6 +35,16 @@ extends TextureNode
 		fill_color = value
 		emit_changed()
 
+@export var fill_use_gradient:= false:
+	set(value):
+		fill_use_gradient = value
+		emit_changed()
+
+@export var fill_gradient:= OklchGradient.new():
+	set(value):
+		fill_gradient = value
+		emit_changed()
+
 @export_range(0, 10, 0.01, "or_greater", "prefer_slider") var fill_smoothing_factor:= 1.2:
 	set(value):
 		fill_smoothing_factor = value
@@ -53,5 +63,8 @@ func _set_material_parameters() -> void:
 
 	RenderingServer.material_set_param(material, "fill_enabled", fill_enabled)
 	RenderingServer.material_set_param(material, "fill_color", fill_color)
+	RenderingServer.material_set_param(material, "fill_use_gradient", fill_use_gradient)
+	RenderingServer.material_set_param(material, "fill_gradient_colors", fill_gradient.get_colors())
+	RenderingServer.material_set_param(material, "fill_gradient_stops", fill_gradient.get_stops())
 	var fill_smoothstep:= fill_smoothing_factor / side_length
 	RenderingServer.material_set_param(material, "fill_smoothstep", fill_smoothstep)
