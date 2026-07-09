@@ -68,7 +68,7 @@ vec4 draw_shape(float sd) {
 	vec4 color;
 
 	// Get a gradient from the signed distance.
-	float gradient = clamp(-sd, 0.0, 1.0);
+	float gradient = clamp(-sd * 2.0, 0.0, 1.0);
 
 	if (outline_enabled) {
 		color = outline_color;
