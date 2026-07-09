@@ -20,9 +20,12 @@ var texture: RID
 
 
 func _init() -> void:
-	shader = _get_shader()
-	if shader == null: # Is root.
+	var name = _get_name()
+	if name.is_empty(): # Is root.
 		return
+
+	const SHAPE_PATH = "res://addons/procedural_texture/shapes/"
+	shader = load(SHAPE_PATH + name.to_lower() + ".gdshader")
 
 	material = RenderingServer.material_create()
 	RenderingServer.material_set_shader(material, shader.get_rid())

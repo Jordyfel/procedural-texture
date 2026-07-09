@@ -22,7 +22,3 @@ func _get_height() -> int:
 
 func _get_width() -> int:
 	return ceil(max(rect.x, rect.y))
-
-
-func _get_shader() -> Shader:
-	return load("uid://cfkqxw1t0o11m")

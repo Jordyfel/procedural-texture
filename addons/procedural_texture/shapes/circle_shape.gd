@@ -18,7 +18,3 @@ func _get_height() -> int:
 
 func _get_width() -> int:
 	return ceil(radius * 2)
-
-
-func _get_shader() -> Shader:
-	return load("uid://6pirh5nhgauc")
