@@ -10,7 +10,8 @@ func get_colors() -> PackedVector4Array:
 	for i in 8:
 		if i < stops.size():
 			var stop:= stops[i]
-			colors[i] = Vector4(stop.l, stop.c, stop.h, stop.a)
+			var oklab:= Oklch.oklch_to_oklab(Oklch.new(stop.l, stop.c, stop.h, stop.a))
+			colors[i] = Vector4(oklab.l, oklab.a, oklab.b, oklab.alpha)
 		else:
 			colors[i] = Vector4()
 

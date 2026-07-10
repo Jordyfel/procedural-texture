@@ -1,4 +1,4 @@
-#include "res://addons/procedural_texture/color/oklch.gdshaderinc"
+#include "res://addons/procedural_texture/color/oklab.gdshaderinc"
 
 // TextureNodeShape.FillMode
 const int MODE_SOLID_COLOR = 0;
@@ -73,7 +73,7 @@ vec4 fill_gradient(float gradient) {
 		color = mix(prev_color, next_color, factor);
 	}
 
-	color.rgb = oklch_to_linear(color.rgb);
+	color.rgb = oklab_to_linear(color.rgb);
 	return color;
 }
 

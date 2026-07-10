@@ -8,22 +8,27 @@ var color: Color
 @export_range(0.0, 1.0, 0.001, "prefer_slider") var l: float:
 	set(value):
 		l = value
-		color = Oklch.oklch_to_linear(Oklch.new(l, c, h, a)).linear_to_srgb()
+		color = oklch_to_srgb()
 
 @export_range(0.0, 0.4, 0.001, "prefer_slider") var c: float:
 	set(value):
 		c = value
-		color = Oklch.oklch_to_linear(Oklch.new(l, c, h, a)).linear_to_srgb()
+		color = oklch_to_srgb()
 
 @export_range(0.0, 360.0, 0.1, "prefer_slider") var h: float:
 	set(value):
 		h = value
-		color = Oklch.oklch_to_linear(Oklch.new(l, c, h, a)).linear_to_srgb()
+		color = oklch_to_srgb()
 
 @export_range(0.0, 1.0, 0.001, "prefer_slider") var a: float:
 	set(value):
 		a = value
-		color = Oklch.oklch_to_linear(Oklch.new(l, c, h, a)).linear_to_srgb()
+		color = oklch_to_srgb()
 
 
 @export_range(0.0, 1.0, 0.001, "prefer_slider") var stop: float
+
+
+func oklch_to_srgb() -> Color:
+	var oklch:= Oklch.new(l, c, h, a)
+	return Oklch.oklab_to_linear(Oklch.oklch_to_oklab(oklch)).linear_to_srgb()

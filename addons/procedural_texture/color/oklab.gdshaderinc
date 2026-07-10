@@ -22,26 +22,14 @@ const mat3 LMS_TO_RGB = mat3(
 	vec3(+0.2309699292, -0.3413193965, +1.7076147010)
 );
 
-vec3 linear_to_oklch(vec3 color) {
+vec3 linear_to_oklab(vec3 color) {
 	vec3 lms = RGB_TO_LMS * color;
 	vec3 lms_cbrt = pow(lms, vec3(1.0 / 3.0));
-	vec3 oklab = LMS_CBRT_TO_OKLAB * lms_cbrt;
-
-	float l = oklab.x;
-	float c = sqrt(oklab.y * oklab.y + oklab.z * oklab.z);
-	float h = (atan(oklab.z, oklab.y) * 180.0) / PI;
-
-	return vec3(l, c, h);
+	return LMS_CBRT_TO_OKLAB * lms_cbrt;
 }
 
-vec3 oklch_to_linear(vec3 color) {
-	float l = color.x;
-	float a = color.y * cos((color.z * PI) / 180.0);
-	float b = color.y * sin((color.z * PI) / 180.0);
-
-	vec3 oklab = vec3(l, a, b);
-	vec3 lms_cbrt = OKLAB_TO_LMS_CBRT * oklab;
+vec3 oklab_to_linear(vec3 color) {
+	vec3 lms_cbrt = OKLAB_TO_LMS_CBRT * color;
 	vec3 lms = pow(lms_cbrt, vec3(3.0));
-
 	return LMS_TO_RGB * lms;
 }
