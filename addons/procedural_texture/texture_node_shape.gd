@@ -84,8 +84,8 @@ func _set_material_parameters() -> void:
 	RenderingServer.material_set_param(material, "fill_color", get_oklab(fill_color))
 	RenderingServer.material_set_param(material, "fill_gradient_colors", fill_gradient.get_colors())
 	RenderingServer.material_set_param(material, "fill_gradient_stops", fill_gradient.get_stops())
-	RenderingServer.material_set_param(
-			material, "linear_gradient_rotation", fill_linear_gradient_rotation)
+	var rot:= Transform2D.IDENTITY.rotated(fill_linear_gradient_rotation)
+	RenderingServer.material_set_param(material, "linear_gradient_rotation", rot)
 	RenderingServer.material_set_param(
 			material, "radial_gradient_origin", fill_radial_gradient_origin)
 	RenderingServer.material_set_param(

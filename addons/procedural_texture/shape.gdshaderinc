@@ -21,7 +21,7 @@ uniform int fill_mode;
 uniform vec4 fill_color;
 uniform vec4 fill_gradient_colors[MAX_STOPS];
 uniform float fill_gradient_stops[MAX_STOPS];
-uniform float linear_gradient_rotation;
+uniform mat2 linear_gradient_rotation;
 uniform vec2 radial_gradient_origin;
 uniform float radial_gradient_radius;
 uniform float fill_smoothstep;
@@ -89,8 +89,8 @@ vec4 make_fill_color(vec2 uv, float gradient, float offset) {
 			color = fill_gradient(gradient);
 			break;
 		case MODE_LINEAR_GRADIENT:
-			// TODO: rotate
-			color = fill_gradient(uv.x);
+			vec2 rot = linear_gradient_rotation * (uv - 0.5) + 0.5;
+			color = fill_gradient(rot.x);
 			break;
 		case MODE_RADIAL_GRADIENT:
 			float radial_sd = length(uv - radial_gradient_origin) - radial_gradient_radius;
