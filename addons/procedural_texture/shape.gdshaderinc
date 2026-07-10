@@ -29,8 +29,10 @@ vec3 linear_to_srgb(vec3 color) {
 			lessThan(color.rgb, vec3(0.0031308f)));
 }
 
-vec4 blend_premult_alpha(vec4 src, vec4 dst) {
-	return vec4(src.rgb + dst.rgb * (1.0 - src.a), src.a + dst.a * (1.0 - src.a));
+vec4 blend(vec4 src, vec4 dst) {
+	float a = src.a + dst.a * (1.0 - src.a);
+	vec3 rgb = vec3(src.rgb * src.a + dst.rgb * dst.a * (1.0 - src.a));
+	return vec4(rgb / a, a);
 }
 
 float outline_mask(float gradient, float offset) {
@@ -116,9 +118,7 @@ vec4 draw_shape(float sd) {
 		} else { // If both fill and outline are enabled, blend the outline over the fill.
 			float offset = EDGE_OFFSET + outline_width / 2.0;
 			vec4 fill_result = make_fill_color(gradient, offset);
-			color.rgb *= color.a;
-			fill_result.rgb *= fill_result.a;
-			color = blend_premult_alpha(color, fill_result);
+			color = blend(color, fill_result);
 		}
 	}
 
