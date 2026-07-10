@@ -6,6 +6,7 @@ var texture: ProceduralTexture
 
 @onready var tree: Tree = %Tree
 @onready var texture_rect: TextureRect = %TextureRect
+@onready var shape_option_button: OptionButton = %ShapeOptionButton
 
 var dragging:= false
 
@@ -58,7 +59,7 @@ func _on_texture_rect_mouse_exited() -> void:
 
 
 func _on_add_button_pressed() -> void:
-	var new_node:= CircleShape.new()
+	var new_node:= TextureNodeShape.create(shape_option_button.selected)
 	new_node.setup()
 	texture.root_node.children.append(new_node)
 	new_node.changed.connect(texture.update)

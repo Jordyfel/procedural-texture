@@ -2,6 +2,8 @@
 @abstract class_name TextureNodeShape
 extends TextureNode
 
+enum Shape {CIRCLE, RECTANGLE}
+
 # Keep in sync with constants in shape.gdshaderinc.
 enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT, GRADIENT_2D}
 
@@ -67,6 +69,16 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 	set(value):
 		fill_smoothing_factor = value
 		emit_changed()
+
+
+static func create(shape: Shape) -> TextureNodeShape:
+	match shape:
+		Shape.CIRCLE:
+			return CircleShape.new()
+		Shape.RECTANGLE:
+			return RectShape.new()
+		_:
+			return CircleShape.new()
 
 
 func _set_material_parameters() -> void:

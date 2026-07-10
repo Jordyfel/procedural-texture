@@ -26,6 +26,16 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Add"
 
+[node name="ShapeOptionButton" type="OptionButton" parent="HBoxContainer/HBoxContainer/VBoxContainer" unique_id=500379071]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Circle"
+popup/item_0/id = 0
+popup/item_1/text = "Rectangle"
+popup/item_1/id = 1
+
 [node name="RemoveButton" type="Button" parent="HBoxContainer/HBoxContainer/VBoxContainer" unique_id=50119004]
 unique_name_in_owner = true
 layout_mode = 2
