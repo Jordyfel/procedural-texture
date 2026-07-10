@@ -2,6 +2,9 @@
 @abstract class_name TextureNodeShape
 extends TextureNode
 
+# Keep in sync with constants in shape.gdshaderinc.
+enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT, GRADIENT_2D}
+
 @export_group("Outline", "outline")
 @export_custom(PROPERTY_HINT_GROUP_ENABLE,"") var outline_enabled:= false:
 	set(value):
@@ -30,14 +33,14 @@ extends TextureNode
 		fill_enabled = value
 		emit_changed()
 
+@export var fill_mode:= FillMode.SOLID_COLOR:
+	set(value):
+		fill_mode = value
+		emit_changed()
+
 @export var fill_color:= Color.WHITE:
 	set(value):
 		fill_color = value
-		emit_changed()
-
-@export var fill_use_gradient:= false:
-	set(value):
-		fill_use_gradient = value
 		emit_changed()
 
 @export var fill_gradient:= OklchGradient.new():
@@ -62,8 +65,8 @@ func _set_material_parameters() -> void:
 	RenderingServer.material_set_param(material, "outline_smoothstep", outline_smoothstep)
 
 	RenderingServer.material_set_param(material, "fill_enabled", fill_enabled)
+	RenderingServer.material_set_param(material, "fill_mode", fill_mode)
 	RenderingServer.material_set_param(material, "fill_color", fill_color)
-	RenderingServer.material_set_param(material, "fill_use_gradient", fill_use_gradient)
 	RenderingServer.material_set_param(material, "fill_gradient_colors", fill_gradient.get_colors())
 	RenderingServer.material_set_param(material, "fill_gradient_stops", fill_gradient.get_stops())
 	var fill_smoothstep:= fill_smoothing_factor / side_length

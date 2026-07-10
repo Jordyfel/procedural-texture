@@ -1,5 +1,12 @@
 #include "res://addons/procedural_texture/color/oklch.gdshaderinc"
 
+// TextureNodeShape.FillMode
+const int MODE_SOLID_COLOR = 0;
+const int MODE_DISTANCE_GRADIENT = 1;
+const int MODE_LINEAR_GRADIENT = 2;
+const int MODE_RADIAL_GRADIENT = 3;
+const int MODE_GRADIENT_2D = 4;
+
 const int MAX_STOPS = 8;
 const float STOP_UNSET = 10.0;
 const float EDGE_OFFSET = 0.01;
@@ -10,8 +17,8 @@ uniform vec4 outline_color : source_color;
 uniform float outline_smoothstep;
 
 uniform bool fill_enabled;
+uniform int fill_mode;
 uniform vec4 fill_color : source_color;
-uniform bool fill_use_gradient;
 uniform vec4 fill_gradient_colors[MAX_STOPS];
 uniform float fill_gradient_stops[MAX_STOPS];
 uniform float fill_smoothstep;
@@ -68,6 +75,30 @@ vec4 fill_gradient(float gradient) {
 	return color;
 }
 
+vec4 make_fill_color(float gradient, float offset) {
+	vec4 color;
+	switch (fill_mode) {
+		case MODE_SOLID_COLOR:
+			color = fill_color;
+			break;
+		case MODE_DISTANCE_GRADIENT:
+			color = fill_gradient(gradient);
+			break;
+		case MODE_LINEAR_GRADIENT:
+			// TODO
+			break;
+		case MODE_RADIAL_GRADIENT:
+			// TODO
+			break;
+		case MODE_GRADIENT_2D:
+			// TODO
+			break;
+	}
+
+	color.a *= fill_mask(gradient, offset);
+	return color;
+}
+
 vec4 draw_shape(float sd) {
 	vec4 color;
 
@@ -81,14 +112,12 @@ vec4 draw_shape(float sd) {
 
 	if (fill_enabled) {
 		if (!outline_enabled) {
-			color = fill_use_gradient ? fill_gradient(gradient) : fill_color;
-			color.a *= fill_mask(gradient, EDGE_OFFSET);
+			color = make_fill_color(gradient, EDGE_OFFSET);
 		} else { // If both fill and outline are enabled, blend the outline over the fill.
-			vec4 fill_result = fill_use_gradient ? fill_gradient(gradient) : fill_color;
 			float offset = EDGE_OFFSET + outline_width / 2.0;
-			fill_result.a *= fill_mask(gradient, offset);
-
+			vec4 fill_result = make_fill_color(gradient, offset);
 			color.rgb *= color.a;
+			fill_result.rgb *= fill_result.a;
 			color = blend_premult_alpha(color, fill_result);
 		}
 	}
