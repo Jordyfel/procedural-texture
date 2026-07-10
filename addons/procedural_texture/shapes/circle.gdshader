@@ -9,5 +9,5 @@ float sd_circle(vec2 uv) {
 
 void blit() {
 	float sd = sd_circle(UV - vec2(0.5));
-	COLOR0 = draw_shape(sd);
+	COLOR0 = draw_shape(UV, sd);
 }

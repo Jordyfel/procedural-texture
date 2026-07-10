@@ -12,5 +12,5 @@ float sd_rect(in vec2 p, in vec2 b) {
 
 void blit() {
 	float sd = sd_rect(UV - vec2(0.5), rect);
-	COLOR0 = draw_shape(sd);
+	COLOR0 = draw_shape(UV, sd);
 }

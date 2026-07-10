@@ -48,6 +48,21 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 		fill_gradient = value
 		emit_changed()
 
+@export_range(0, 360, 0.001, "radians_as_degrees") var fill_linear_gradient_rotation:= 0.0:
+	set(value):
+		fill_linear_gradient_rotation = value
+		emit_changed()
+
+@export var fill_radial_gradient_origin:= Vector2(0.5, 0.5):
+	set(value):
+		fill_radial_gradient_origin = value
+		emit_changed()
+
+@export_range(0, 1.0, 0.001, "or_greater", "prefer_slider") var fill_radial_gradient_radius:= 0.5:
+	set(value):
+		fill_radial_gradient_radius = value
+		emit_changed()
+
 @export_range(0, 10, 0.01, "or_greater", "prefer_slider") var fill_smoothing_factor:= 1.2:
 	set(value):
 		fill_smoothing_factor = value
@@ -69,6 +84,12 @@ func _set_material_parameters() -> void:
 	RenderingServer.material_set_param(material, "fill_color", get_oklab(fill_color))
 	RenderingServer.material_set_param(material, "fill_gradient_colors", fill_gradient.get_colors())
 	RenderingServer.material_set_param(material, "fill_gradient_stops", fill_gradient.get_stops())
+	RenderingServer.material_set_param(
+			material, "linear_gradient_rotation", fill_linear_gradient_rotation)
+	RenderingServer.material_set_param(
+			material, "radial_gradient_origin", fill_radial_gradient_origin)
+	RenderingServer.material_set_param(
+			material, "radial_gradient_radius", fill_radial_gradient_radius)
 	var fill_smoothstep:= fill_smoothing_factor / side_length
 	RenderingServer.material_set_param(material, "fill_smoothstep", fill_smoothstep)
 

@@ -21,6 +21,9 @@ uniform int fill_mode;
 uniform vec4 fill_color;
 uniform vec4 fill_gradient_colors[MAX_STOPS];
 uniform float fill_gradient_stops[MAX_STOPS];
+uniform float linear_gradient_rotation;
+uniform vec2 radial_gradient_origin;
+uniform float radial_gradient_radius;
 uniform float fill_smoothstep;
 
 vec3 linear_to_srgb(vec3 color) {
@@ -76,7 +79,7 @@ vec4 fill_gradient(float gradient) {
 	return color;
 }
 
-vec4 make_fill_color(float gradient, float offset) {
+vec4 make_fill_color(vec2 uv, float gradient, float offset) {
 	vec4 color;
 	switch (fill_mode) {
 		case MODE_SOLID_COLOR:
@@ -86,10 +89,13 @@ vec4 make_fill_color(float gradient, float offset) {
 			color = fill_gradient(gradient);
 			break;
 		case MODE_LINEAR_GRADIENT:
-			// TODO
+			// TODO: rotate
+			color = fill_gradient(uv.x);
 			break;
 		case MODE_RADIAL_GRADIENT:
-			// TODO
+			float radial_sd = length(uv - radial_gradient_origin) - radial_gradient_radius;
+			float radial_gradient = max(-radial_sd * 2.0, 0.0);
+			color = fill_gradient(radial_gradient);
 			break;
 		case MODE_GRADIENT_2D:
 			// TODO
@@ -100,7 +106,7 @@ vec4 make_fill_color(float gradient, float offset) {
 	return color;
 }
 
-vec4 draw_shape(float sd) {
+vec4 draw_shape(vec2 uv, float sd) {
 	vec4 color;
 
 	// Get a gradient from the signed distance.
@@ -113,10 +119,10 @@ vec4 draw_shape(float sd) {
 
 	if (fill_enabled) {
 		if (!outline_enabled) {
-			color = make_fill_color(gradient, EDGE_OFFSET);
+			color = make_fill_color(uv, gradient, EDGE_OFFSET);
 		} else { // If both fill and outline are enabled, blend the outline over the fill.
 			float offset = EDGE_OFFSET + outline_width / 2.0;
-			vec4 fill_result = make_fill_color(gradient, offset);
+			vec4 fill_result = make_fill_color(uv, gradient, offset);
 			color = blend(color, fill_result);
 		}
 	}
