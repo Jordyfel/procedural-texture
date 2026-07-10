@@ -10,7 +10,10 @@ extends TextureNodeShape
 
 func _set_material_parameters() -> void:
 	super()
-	RenderingServer.material_set_param(material, "rect", rect / max(rect.x, rect.y) / 2)
+	RenderingServer.material_set_param(material, "shape", Shape.RECTANGLE)
+	var uv_rect: Vector2 = rect / max(rect.x, rect.y) / 2
+	var shape_data:= Vector4(uv_rect.x, uv_rect.y, 0, 0)
+	RenderingServer.material_set_param(material, "shape_data", shape_data)
 
 
 func _get_name() -> String:
