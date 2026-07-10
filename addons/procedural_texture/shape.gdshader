@@ -20,8 +20,7 @@ const float STOP_UNSET = 10.0;
 const float EDGE_OFFSET = 0.01;
 
 uniform int shape;
-
-uniform vec2 rect;
+uniform vec4 shape_data;
 
 uniform bool outline_enabled;
 uniform float outline_width;
@@ -118,7 +117,18 @@ vec4 make_fill_color(vec2 uv, float gradient, float offset) {
 	return color;
 }
 
-vec4 draw_shape(vec2 uv, float sd) {
+vec4 draw_shape(vec2 uv) {
+	uv = uv - vec2(0.5);
+	float sd;
+	switch (shape) {
+		case SHAPE_CIRCLE:
+			sd = sd_circle(uv);
+			break;
+		case SHAPE_RECTANGLE:
+			sd = sd_rect(uv, shape_data.xy);
+			break;
+	}
+
 	vec4 color;
 
 	// Get a gradient from the signed distance.
@@ -139,23 +149,15 @@ vec4 draw_shape(vec2 uv, float sd) {
 		}
 	}
 
-	color.rgb = oklab_to_linear(color.rgb);
-	color.rgb = linear_to_srgb(color.rgb);
-	color.rgb *= color.a;
 	return color;
 }
 
 void blit() {
-	vec2 uv = UV - vec2(0.5);
-	float sd;
-	switch (shape) {
-		case SHAPE_CIRCLE:
-			sd = sd_circle(uv);
-			break;
-		case SHAPE_RECTANGLE:
-			sd = sd_rect(uv, rect);
-			break;
-	}
+	vec4 color = draw_shape(UV);
 
-	COLOR0 = draw_shape(UV, sd);
+	color.rgb = oklab_to_linear(color.rgb);
+	color.rgb = linear_to_srgb(color.rgb);
+	color.rgb *= color.a;
+
+	COLOR0 = color;
 }
