@@ -2,12 +2,11 @@
 
 [ext_resource type="Script" uid="uid://b5ogxb8e5cmdg" path="res://addons/procedural_texture/texture_node.gd" id="1_11slx"]
 [ext_resource type="Script" uid="uid://bswd55yofyxs3" path="res://addons/procedural_texture/shapes/circle_shape.gd" id="2_3obym"]
-[ext_resource type="Shader" uid="uid://6pirh5nhgauc" path="res://addons/procedural_texture/shapes/circle.gdshader" id="3_le2ur"]
 [ext_resource type="Script" uid="uid://ltvetito3wa0" path="res://addons/procedural_texture/color/oklch_gradient.gd" id="4_le2ur"]
 [ext_resource type="Script" uid="uid://bc4v7ap0o4u6n" path="res://addons/procedural_texture/procedural_texture.gd" id="4_oafep"]
 [ext_resource type="Script" uid="uid://darr1s84rm8n" path="res://addons/procedural_texture/color/oklch_stop.gd" id="5_oafep"]
 [ext_resource type="Script" uid="uid://dlee72psynlb7" path="res://addons/procedural_texture/shapes/rect_shape.gd" id="6_oshtt"]
-[ext_resource type="Shader" uid="uid://cfkqxw1t0o11m" path="res://addons/procedural_texture/shapes/rectangle.gdshader" id="7_7ai0e"]
+[ext_resource type="Shader" uid="uid://cki66x75vn1uk" path="res://addons/procedural_texture/shape.gdshader" id="7_7ai0e"]
 
 [sub_resource type="Resource" id="Resource_oshtt"]
 script = ExtResource("5_oafep")
@@ -74,8 +73,8 @@ fill_enabled = true
 fill_mode = 1
 fill_color = Color(0.5180269, 0.62105, 9.62615e-07, 1)
 fill_gradient = SubResource("Resource_lelyu")
-position = Vector2(120.83201, 121.856)
-shader = ExtResource("3_le2ur")
+position = Vector2(137.216, 129.024)
+shader = ExtResource("7_7ai0e")
 
 [sub_resource type="Resource" id="Resource_le2ur"]
 script = ExtResource("4_le2ur")
@@ -86,7 +85,7 @@ fill_enabled = true
 fill_color = Color(5.053729e-07, 0.3157639, 0.39540434, 1)
 fill_gradient = SubResource("Resource_le2ur")
 position = Vector2(193.53601, 65.536)
-shader = ExtResource("3_le2ur")
+shader = ExtResource("7_7ai0e")
 
 [sub_resource type="Resource" id="Resource_ndh1u"]
 script = ExtResource("1_11slx")

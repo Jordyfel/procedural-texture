@@ -1,4 +1,12 @@
+shader_type texture_blit;
+render_mode blend_premul_alpha;
+
 #include "res://addons/procedural_texture/color/oklab.gdshaderinc"
+#include "res://addons/procedural_texture/sdf_shapes.gdshaderinc"
+
+// TextureNodeShape.Shape
+const int SHAPE_CIRCLE = 0;
+const int SHAPE_RECTANGLE = 1;
 
 // TextureNodeShape.FillMode
 const int MODE_SOLID_COLOR = 0;
@@ -10,6 +18,10 @@ const int MODE_GRADIENT_2D = 4;
 const int MAX_STOPS = 8;
 const float STOP_UNSET = 10.0;
 const float EDGE_OFFSET = 0.01;
+
+uniform int shape;
+
+uniform vec2 rect;
 
 uniform bool outline_enabled;
 uniform float outline_width;
@@ -131,4 +143,19 @@ vec4 draw_shape(vec2 uv, float sd) {
 	color.rgb = linear_to_srgb(color.rgb);
 	color.rgb *= color.a;
 	return color;
+}
+
+void blit() {
+	vec2 uv = UV - vec2(0.5);
+	float sd;
+	switch (shape) {
+		case SHAPE_CIRCLE:
+			sd = sd_circle(uv);
+			break;
+		case SHAPE_RECTANGLE:
+			sd = sd_rect(uv, rect);
+			break;
+	}
+
+	COLOR0 = draw_shape(UV, sd);
 }

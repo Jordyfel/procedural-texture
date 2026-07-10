@@ -24,8 +24,7 @@ func setup() -> void:
 	if name.is_empty(): # Is root.
 		return
 
-	const SHAPE_PATH = "res://addons/procedural_texture/shapes/"
-	shader = load(SHAPE_PATH + name.to_lower() + ".gdshader")
+	shader = load("res://addons/procedural_texture/shapes/shape.gdshader")
 
 	_initialize()
 
