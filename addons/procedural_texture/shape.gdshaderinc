@@ -13,12 +13,12 @@ const float EDGE_OFFSET = 0.01;
 
 uniform bool outline_enabled;
 uniform float outline_width;
-uniform vec4 outline_color : source_color;
+uniform vec4 outline_color;
 uniform float outline_smoothstep;
 
 uniform bool fill_enabled;
 uniform int fill_mode;
-uniform vec4 fill_color : source_color;
+uniform vec4 fill_color;
 uniform vec4 fill_gradient_colors[MAX_STOPS];
 uniform float fill_gradient_stops[MAX_STOPS];
 uniform float fill_smoothstep;
@@ -73,7 +73,6 @@ vec4 fill_gradient(float gradient) {
 		color = mix(prev_color, next_color, factor);
 	}
 
-	color.rgb = oklab_to_linear(color.rgb);
 	return color;
 }
 
@@ -122,6 +121,7 @@ vec4 draw_shape(float sd) {
 		}
 	}
 
+	color.rgb = oklab_to_linear(color.rgb);
 	color.rgb = linear_to_srgb(color.rgb);
 	color.rgb *= color.a;
 	return color;

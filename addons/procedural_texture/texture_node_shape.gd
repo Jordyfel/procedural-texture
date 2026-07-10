@@ -60,14 +60,19 @@ func _set_material_parameters() -> void:
 	RenderingServer.material_set_param(material, "outline_enabled", outline_enabled)
 	var outline_width_normalized:= outline_width / side_length
 	RenderingServer.material_set_param(material, "outline_width", outline_width_normalized)
-	RenderingServer.material_set_param(material, "outline_color", outline_color)
+	RenderingServer.material_set_param(material, "outline_color", get_oklab(outline_color))
 	var outline_smoothstep:= outline_smoothing_factor / side_length
 	RenderingServer.material_set_param(material, "outline_smoothstep", outline_smoothstep)
 
 	RenderingServer.material_set_param(material, "fill_enabled", fill_enabled)
 	RenderingServer.material_set_param(material, "fill_mode", fill_mode)
-	RenderingServer.material_set_param(material, "fill_color", fill_color)
+	RenderingServer.material_set_param(material, "fill_color", get_oklab(fill_color))
 	RenderingServer.material_set_param(material, "fill_gradient_colors", fill_gradient.get_colors())
 	RenderingServer.material_set_param(material, "fill_gradient_stops", fill_gradient.get_stops())
 	var fill_smoothstep:= fill_smoothing_factor / side_length
 	RenderingServer.material_set_param(material, "fill_smoothstep", fill_smoothstep)
+
+
+func get_oklab(color: Color) -> Vector4:
+	var oklab:= Oklch.linear_to_oklab(color.srgb_to_linear())
+	return Vector4(oklab.l, oklab.a, oklab.b, oklab.alpha)
