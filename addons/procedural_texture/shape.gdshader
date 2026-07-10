@@ -1,8 +1,10 @@
 shader_type texture_blit;
-render_mode blend_premul_alpha;
+render_mode blend_disabled;
 
 #include "res://addons/procedural_texture/color/oklab.gdshaderinc"
 #include "res://addons/procedural_texture/sdf_shapes.gdshaderinc"
+
+const int MAX_SHAPE_COUNT = 16;
 
 // TextureNodeShape.Shape
 const int SHAPE_CIRCLE = 0;
@@ -19,23 +21,26 @@ const int MAX_STOPS = 8;
 const float STOP_UNSET = 10.0;
 const float EDGE_OFFSET = 0.01;
 
-uniform int shape;
-uniform vec4 shape_data;
+uniform int shape_count;
 
-uniform bool outline_enabled;
-uniform float outline_width;
-uniform vec4 outline_color;
-uniform float outline_smoothstep;
+uniform int shape[MAX_SHAPE_COUNT];
+uniform vec4 shape_rect[MAX_SHAPE_COUNT];
+uniform vec4 shape_data[MAX_SHAPE_COUNT];
 
-uniform bool fill_enabled;
-uniform int fill_mode;
-uniform vec4 fill_color;
-uniform vec4 fill_gradient_colors[MAX_STOPS];
-uniform float fill_gradient_stops[MAX_STOPS];
-uniform mat2 linear_gradient_rotation;
-uniform vec2 radial_gradient_origin;
-uniform float radial_gradient_radius;
-uniform float fill_smoothstep;
+uniform bool outline_enabled[MAX_SHAPE_COUNT];
+uniform float outline_width[MAX_SHAPE_COUNT];
+uniform vec4 outline_color[MAX_SHAPE_COUNT];
+uniform float outline_smoothstep[MAX_SHAPE_COUNT];
+
+uniform bool fill_enabled[MAX_SHAPE_COUNT];
+uniform int fill_mode[MAX_SHAPE_COUNT];
+uniform vec4 fill_color[MAX_SHAPE_COUNT];
+uniform vec4 fill_gradient_colors[MAX_SHAPE_COUNT * MAX_STOPS];
+uniform float fill_gradient_stops[MAX_SHAPE_COUNT * MAX_STOPS];
+uniform vec4 linear_gradient_rotation[MAX_SHAPE_COUNT];
+uniform vec2 radial_gradient_origin[MAX_SHAPE_COUNT];
+uniform float radial_gradient_radius[MAX_SHAPE_COUNT];
+uniform float fill_smoothstep[MAX_SHAPE_COUNT];
 
 vec3 linear_to_srgb(vec3 color) {
 	const vec3 a = vec3(0.055f);
@@ -49,21 +54,21 @@ vec4 blend(vec4 src, vec4 dst) {
 	return vec4(rgb / a, a);
 }
 
-float outline_mask(float gradient, float offset) {
-	float outline = smoothstep(offset, offset + outline_smoothstep, gradient);
-	float outline_inner = outline_width + offset;
-	outline *= smoothstep(outline_inner + outline_smoothstep, outline_inner, gradient);
+float outline_mask(float gradient, float width, float smoothing, float offset) {
+	float outline = smoothstep(offset, offset + smoothing, gradient);
+	float outline_inner = width + offset;
+	outline *= smoothstep(outline_inner + smoothing, outline_inner, gradient);
 	return outline;
 }
 
-float fill_mask(float gradient, float offset) {
-	float fill = smoothstep(offset, offset + fill_smoothstep, gradient);
+float fill_mask(float gradient, float smoothing, float offset) {
+	float fill = smoothstep(offset, offset + smoothing, gradient);
 	return fill;
 }
 
-vec4 fill_gradient(float gradient) {
+vec4 fill_gradient(int index, float gradient) {
 	int next_stop_index = -1;
-	for (int i = 0; i < fill_gradient_stops.length(); i++) {
+	for (int i = index * MAX_STOPS; i < (index + 1) * MAX_STOPS; i++) {
 		if (fill_gradient_stops[i] > gradient) {
 			next_stop_index = i;
 			break;
@@ -71,10 +76,10 @@ vec4 fill_gradient(float gradient) {
 	}
 
 	vec4 color;
-	if (next_stop_index == 0) { // First color.
+	if (next_stop_index == index * MAX_STOPS) { // First color.
 		color = vec4(fill_gradient_colors[0]);
 	} else if (next_stop_index == -1) { // Last Color when full.
-		color = vec4(fill_gradient_colors[MAX_STOPS - 1]);
+		color = vec4(fill_gradient_colors[(index * MAX_STOPS) - 1]);
 	} else if (fill_gradient_stops[next_stop_index] > STOP_UNSET) { // Last Color when not full.
 		color = vec4(fill_gradient_colors[next_stop_index - 1]);
 	} else { // Interpolate.
@@ -90,61 +95,72 @@ vec4 fill_gradient(float gradient) {
 	return color;
 }
 
-vec4 make_fill_color(vec2 uv, float gradient, float offset) {
+vec4 make_fill_color(vec2 uv, int index, float gradient, float offset) {
 	vec4 color;
-	switch (fill_mode) {
+	switch (fill_mode[index]) {
 		case MODE_SOLID_COLOR:
-			color = fill_color;
+			color = fill_color[index];
 			break;
 		case MODE_DISTANCE_GRADIENT:
-			color = fill_gradient(gradient);
+			color = fill_gradient(index, gradient);
 			break;
 		case MODE_LINEAR_GRADIENT:
-			vec2 rot = linear_gradient_rotation * (uv - 0.5) + 0.5;
-			color = fill_gradient(rot.x);
+			vec4 r = linear_gradient_rotation[index];
+			mat2 rotation = mat2(vec2(r.x, r.y), vec2(r.z, r.w));
+			uv = rotation * (uv - 0.5) + 0.5;
+			color = fill_gradient(index, uv.x);
 			break;
 		case MODE_RADIAL_GRADIENT:
-			float radial_sd = length(uv - radial_gradient_origin) - radial_gradient_radius;
+			float radial_sd = length(uv - radial_gradient_origin[index]) - radial_gradient_radius[index];
 			float radial_gradient = max(-radial_sd * 2.0, 0.0);
-			color = fill_gradient(radial_gradient);
+			color = fill_gradient(index, radial_gradient);
 			break;
 		case MODE_GRADIENT_2D:
 			// TODO
 			break;
 	}
 
-	color.a *= fill_mask(gradient, offset);
+	color.a *= fill_mask(gradient, fill_smoothstep[index], offset);
 	return color;
 }
 
-vec4 draw_shape(vec2 uv) {
-	uv = uv - vec2(0.5);
+vec4 draw_shape(vec2 uv, int index) {
+	vec4 rect = shape_rect[index];
+	if (any(lessThan(uv, rect.xy)) || any(greaterThan(uv, rect.xy + rect.zw))) {
+		return vec4(0.0);
+	}
+
+	uv = (uv - rect.xy) / rect.zw;
 	float sd;
-	switch (shape) {
+	switch (shape[index]) {
 		case SHAPE_CIRCLE:
-			sd = sd_circle(uv);
+			sd = sd_circle(uv - vec2(0.5));
 			break;
 		case SHAPE_RECTANGLE:
-			sd = sd_rect(uv, shape_data.xy);
+			sd = sd_rect(uv - vec2(0.5), shape_data[index].xy);
+
 			break;
 	}
 
 	vec4 color;
 
 	// Get a gradient from the signed distance.
-	float gradient = clamp(-sd * 2.0, 0.0, 1.0);
-
-	if (outline_enabled) {
-		color = outline_color;
-		color.a *= outline_mask(gradient, EDGE_OFFSET);
+	float gradient = -sd * 2.0;
+	if (gradient < 0.0) {
+		return vec4(0.0);
 	}
 
-	if (fill_enabled) {
-		if (!outline_enabled) {
-			color = make_fill_color(uv, gradient, EDGE_OFFSET);
+	if (outline_enabled[index]) {
+		color = outline_color[index];
+		color.a *= outline_mask(gradient, outline_width[index], outline_smoothstep[index], EDGE_OFFSET);
+	}
+
+	if (fill_enabled[index]) {
+		if (!outline_enabled[index]) {
+			color = make_fill_color(uv, index, gradient, EDGE_OFFSET);
 		} else { // If both fill and outline are enabled, blend the outline over the fill.
-			float offset = EDGE_OFFSET + outline_width / 2.0;
-			vec4 fill_result = make_fill_color(uv, gradient, offset);
+			float offset = EDGE_OFFSET + outline_width[index] / 2.0;
+			vec4 fill_result = make_fill_color(uv, index, gradient, offset);
 			color = blend(color, fill_result);
 		}
 	}
@@ -153,11 +169,16 @@ vec4 draw_shape(vec2 uv) {
 }
 
 void blit() {
-	vec4 color = draw_shape(UV);
+	vec4 color = MODULATE;
+
+	int count = min(shape_count, MAX_SHAPE_COUNT);
+	for (int index = 0; index < count; index++) {
+		vec4 new_color = draw_shape(UV, index);
+		color = blend(new_color, color);
+	}
 
 	color.rgb = oklab_to_linear(color.rgb);
 	color.rgb = linear_to_srgb(color.rgb);
-	color.rgb *= color.a;
 
 	COLOR0 = color;
 }

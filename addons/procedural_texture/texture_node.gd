@@ -12,41 +12,7 @@ extends Resource
 		rotation = value
 		emit_changed()
 
-@export_storage var shader: Shader
 @export_storage var children: Array[TextureNode]
-
-var material: RID
-var texture: RID
-
-
-func setup() -> void:
-	var name = _get_name()
-	if name.is_empty(): # Is root.
-		return
-
-	shader = load("res://addons/procedural_texture/shapes/shape.gdshader")
-
-	_initialize()
-
-
-func _initialize() -> void:
-	material = RenderingServer.material_create()
-	RenderingServer.material_set_shader(material, shader.get_rid())
-
-
-func _notification(what: int) -> void:
-	if what == NOTIFICATION_RESOURCE_DESERIALIZED:
-		if _get_name().is_empty() or material.is_valid(): # Is root or is initialized.
-			return
-
-		_initialize()
-
-	if what == NOTIFICATION_PREDELETE and material.is_valid():
-		RenderingServer.free_rid(material)
-
-
-func _set_material_parameters() -> void:
-	pass
 
 
 func _get_name() -> String:

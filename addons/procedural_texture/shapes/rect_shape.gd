@@ -8,12 +8,13 @@ extends TextureNodeShape
 		emit_changed()
 
 
-func _set_material_parameters() -> void:
-	super()
-	RenderingServer.material_set_param(material, "shape", Shape.RECTANGLE)
+func _get_shape() -> Shape:
+	return Shape.RECTANGLE
+
+
+func _get_shape_data() -> Vector4:
 	var uv_rect: Vector2 = rect / max(rect.x, rect.y) / 2
-	var shape_data:= Vector4(uv_rect.x, uv_rect.y, 0, 0)
-	RenderingServer.material_set_param(material, "shape_data", shape_data)
+	return Vector4(uv_rect.x, uv_rect.y, 0, 0)
 
 
 func _get_name() -> String:

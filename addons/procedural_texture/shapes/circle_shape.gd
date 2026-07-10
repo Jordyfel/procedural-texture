@@ -8,9 +8,8 @@ extends TextureNodeShape
 		emit_changed()
 
 
-func _set_material_parameters() -> void:
-	super()
-	RenderingServer.material_set_param(material, "shape", Shape.CIRCLE)
+func _get_shape() -> Shape:
+	return Shape.CIRCLE
 
 
 func _get_name() -> String:
