@@ -153,6 +153,8 @@ func _set_material_parameters() -> void:
 	shape.resize(MAX_SHAPE_COUNT)
 	var shape_rect:= PackedVector4Array()
 	shape_rect.resize(MAX_SHAPE_COUNT)
+	var shape_rotation:= PackedVector4Array()
+	shape_rotation.resize(MAX_SHAPE_COUNT)
 	var shape_data:= PackedVector4Array()
 	shape_data.resize(MAX_SHAPE_COUNT)
 	var outline_enabled:= PackedInt32Array()
@@ -193,6 +195,8 @@ func _set_material_parameters() -> void:
 		var tex_size:= Vector2(width, height)
 		rect = Rect2(rect.position / tex_size, rect.size / tex_size)
 		shape_rect[i] = Vector4(rect.position.x, rect.position.y, rect.size.x, rect.size.y)
+		var r:= Transform2D.IDENTITY.rotated(node.rotation)
+		shape_rotation[i] = Vector4(r.x.x, r.x.y, r.y.x, r.y.y)
 		shape_data[i] = node._get_shape_data()
 		outline_enabled[i] = node.outline_enabled as int
 		outline_width[i] = node.outline_width / side_length
@@ -215,6 +219,7 @@ func _set_material_parameters() -> void:
 	RenderingServer.material_set_param(material, "shape_count", count)
 	RenderingServer.material_set_param(material, "shape", shape)
 	RenderingServer.material_set_param(material, "shape_rect", shape_rect)
+	RenderingServer.material_set_param(material, "shape_rotation", shape_rotation)
 	RenderingServer.material_set_param(material, "shape_data", shape_data)
 	RenderingServer.material_set_param(material, "outline_enabled", outline_enabled)
 	RenderingServer.material_set_param(material, "outline_width", outline_width)

@@ -25,6 +25,7 @@ uniform int shape_count;
 
 uniform int shape[MAX_SHAPE_COUNT];
 uniform vec4 shape_rect[MAX_SHAPE_COUNT];
+uniform vec4 shape_rotation[MAX_SHAPE_COUNT];
 uniform vec4 shape_data[MAX_SHAPE_COUNT];
 
 uniform bool outline_enabled[MAX_SHAPE_COUNT];
@@ -126,11 +127,15 @@ vec4 make_fill_color(vec2 uv, int index, float gradient, float offset) {
 
 vec4 draw_shape(vec2 uv, int index) {
 	vec4 rect = shape_rect[index];
-	if (any(lessThan(uv, rect.xy)) || any(greaterThan(uv, rect.xy + rect.zw))) {
+	vec4 r = shape_rotation[index];
+	mat2 rotation = mat2(vec2(r.x, r.y), vec2(r.z, r.w));
+
+	uv = (uv - rect.xy) / rect.zw;
+	uv = rotation * (uv - 0.5) + 0.5;
+	if (any(lessThan(uv, vec2(0.0))) || any(greaterThan(uv, vec2(1.0)))) {
 		return vec4(0.0);
 	}
 
-	uv = (uv - rect.xy) / rect.zw;
 	float sd;
 	switch (shape[index]) {
 		case SHAPE_CIRCLE:
