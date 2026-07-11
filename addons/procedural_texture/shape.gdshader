@@ -17,8 +17,7 @@ const int MODE_LINEAR_GRADIENT = 2;
 const int MODE_RADIAL_GRADIENT = 3;
 const int MODE_GRADIENT_2D = 4;
 
-const int MAX_STOPS = 8;
-const float STOP_UNSET = 10.0;
+const int AVG_STOPS = 4;
 const float EDGE_OFFSET = 0.01;
 
 uniform int shape_count;
@@ -36,8 +35,10 @@ uniform float outline_smoothstep[MAX_SHAPE_COUNT];
 uniform bool fill_enabled[MAX_SHAPE_COUNT];
 uniform int fill_mode[MAX_SHAPE_COUNT];
 uniform vec4 fill_color[MAX_SHAPE_COUNT];
-uniform vec4 fill_gradient_colors[MAX_SHAPE_COUNT * MAX_STOPS];
-uniform float fill_gradient_stops[MAX_SHAPE_COUNT * MAX_STOPS];
+uniform int fill_gradient_first_stop[MAX_SHAPE_COUNT];
+uniform int fill_gradient_stop_count[MAX_SHAPE_COUNT];
+uniform vec4 fill_gradient_colors[MAX_SHAPE_COUNT * AVG_STOPS];
+uniform float fill_gradient_stops[MAX_SHAPE_COUNT * AVG_STOPS];
 uniform vec4 linear_gradient_rotation[MAX_SHAPE_COUNT];
 uniform vec2 radial_gradient_origin[MAX_SHAPE_COUNT];
 uniform float radial_gradient_radius[MAX_SHAPE_COUNT];
@@ -69,7 +70,9 @@ float fill_mask(float gradient, float smoothing, float offset) {
 
 vec4 fill_gradient(int index, float gradient) {
 	int next_stop_index = -1;
-	for (int i = index * MAX_STOPS; i < (index + 1) * MAX_STOPS; i++) {
+	int first_stop = fill_gradient_first_stop[index];
+	int last_stop = first_stop + fill_gradient_stop_count[index] - 1;
+	for (int i = first_stop; i <= last_stop; i++) {
 		if (fill_gradient_stops[i] > gradient) {
 			next_stop_index = i;
 			break;
@@ -77,12 +80,10 @@ vec4 fill_gradient(int index, float gradient) {
 	}
 
 	vec4 color;
-	if (next_stop_index == index * MAX_STOPS) { // First color.
-		color = vec4(fill_gradient_colors[0]);
-	} else if (next_stop_index == -1) { // Last Color when full.
-		color = vec4(fill_gradient_colors[(index * MAX_STOPS) - 1]);
-	} else if (fill_gradient_stops[next_stop_index] > STOP_UNSET) { // Last Color when not full.
-		color = vec4(fill_gradient_colors[next_stop_index - 1]);
+	if (next_stop_index == first_stop) { // First color.
+		color = vec4(fill_gradient_colors[first_stop]);
+	} else if (next_stop_index == -1) { // Last Color.
+		color = vec4(fill_gradient_colors[last_stop]);
 	} else { // Interpolate.
 		float prev_stop = fill_gradient_stops[next_stop_index - 1];
 		float next_stop = fill_gradient_stops[next_stop_index];

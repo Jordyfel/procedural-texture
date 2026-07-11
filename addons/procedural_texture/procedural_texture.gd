@@ -21,7 +21,7 @@ extends Texture2D
 @export_storage var shader: Shader
 
 const MAX_SHAPE_COUNT = 16;
-const MAX_GRADIENT_STOPS = 8;
+const AVG_GRADIENT_STOPS = 4;
 
 var initialized:= false
 
@@ -171,10 +171,14 @@ func _set_material_parameters() -> void:
 	fill_mode.resize(MAX_SHAPE_COUNT)
 	var fill_color:= PackedVector4Array()
 	fill_color.resize(MAX_SHAPE_COUNT)
+	var fill_gradient_first_stop:= PackedInt32Array()
+	fill_gradient_first_stop.resize(MAX_SHAPE_COUNT)
+	var fill_gradient_stop_count:= PackedInt32Array()
+	fill_gradient_stop_count.resize(MAX_SHAPE_COUNT)
 	var fill_gradient_colors:= PackedVector4Array()
-	fill_gradient_colors.resize(MAX_SHAPE_COUNT * MAX_GRADIENT_STOPS)
+	fill_gradient_colors.resize(MAX_SHAPE_COUNT * AVG_GRADIENT_STOPS)
 	var fill_gradient_stops:= PackedFloat32Array()
-	fill_gradient_stops.resize(MAX_SHAPE_COUNT * MAX_GRADIENT_STOPS)
+	fill_gradient_stops.resize(MAX_SHAPE_COUNT * AVG_GRADIENT_STOPS)
 	var linear_gradient_rotation:= PackedVector4Array()
 	linear_gradient_rotation.resize(MAX_SHAPE_COUNT)
 	var radial_gradient_origin:= PackedVector2Array()
@@ -185,6 +189,7 @@ func _set_material_parameters() -> void:
 	fill_smoothstep.resize(MAX_SHAPE_COUNT)
 
 	var count:= root_node.children.size()
+	var stop_count_accum:= 0
 	for i in range(count - 1, -1, -1):
 		var node:= root_node.children[i] as TextureNodeShape
 		var side_length:= node._get_width() as float
@@ -207,9 +212,15 @@ func _set_material_parameters() -> void:
 		fill_color[i] = get_oklab(node.fill_color)
 		var colors:= node.fill_gradient.get_colors()
 		var stops:= node.fill_gradient.get_stops()
-		for j in MAX_GRADIENT_STOPS:
-			fill_gradient_colors[i * MAX_GRADIENT_STOPS + j] = colors[j]
-			fill_gradient_stops[i * MAX_GRADIENT_STOPS + j] = stops[j]
+		var stop_count:= colors.size()
+		fill_gradient_first_stop[i] = stop_count_accum
+		fill_gradient_stop_count[i] = stop_count
+		var j:= 0
+		for k in range(stop_count_accum, stop_count_accum + stop_count):
+			fill_gradient_colors[k] = colors[j]
+			fill_gradient_stops[k] = stops[j]
+			j += 1
+		stop_count_accum += stop_count
 		var rot:= Transform2D.IDENTITY.rotated(node.fill_linear_gradient_rotation)
 		linear_gradient_rotation[i] = Vector4(rot.x.x, rot.x.y, rot.y.x, rot.y.y)
 		radial_gradient_origin[i] = node.fill_radial_gradient_origin
@@ -228,6 +239,8 @@ func _set_material_parameters() -> void:
 	RenderingServer.material_set_param(material, "fill_enabled", fill_enabled)
 	RenderingServer.material_set_param(material, "fill_mode", fill_mode)
 	RenderingServer.material_set_param(material, "fill_color", fill_color)
+	RenderingServer.material_set_param(material, "fill_gradient_first_stop", fill_gradient_first_stop)
+	RenderingServer.material_set_param(material, "fill_gradient_stop_count", fill_gradient_stop_count)
 	RenderingServer.material_set_param(material, "fill_gradient_colors", fill_gradient_colors)
 	RenderingServer.material_set_param(material, "fill_gradient_stops", fill_gradient_stops)
 	RenderingServer.material_set_param(material, "linear_gradient_rotation", linear_gradient_rotation)

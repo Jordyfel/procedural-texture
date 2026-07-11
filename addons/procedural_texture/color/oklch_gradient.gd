@@ -6,26 +6,16 @@ extends Resource
 
 func get_colors() -> PackedVector4Array:
 	var colors:= PackedVector4Array()
-	colors.resize(8)
-	for i in 8:
-		if i < stops.size():
-			var stop:= stops[i]
-			var oklab:= Oklch.oklch_to_oklab(Oklch.new(stop.l, stop.c, stop.h, stop.a))
-			colors[i] = Vector4(oklab.l, oklab.a, oklab.b, oklab.alpha)
-		else:
-			colors[i] = Vector4()
+	for stop in stops:
+		var oklab:= Oklch.oklch_to_oklab(Oklch.new(stop.l, stop.c, stop.h, stop.a))
+		colors.push_back(Vector4(oklab.l, oklab.a, oklab.b, oklab.alpha))
 
 	return colors
 
 
 func get_stops() -> PackedFloat32Array:
 	var stops_:= PackedFloat32Array()
-	stops_.resize(8)
-	for i in 8:
-		if i < stops.size():
-			var stop:= stops[i]
-			stops_[i] = stop.stop
-		else:
-			stops_[i] = 100.0
+	for stop in stops:
+		stops_.push_back(stop.stop)
 
 	return stops_
