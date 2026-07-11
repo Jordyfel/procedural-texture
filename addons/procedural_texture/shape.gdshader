@@ -19,6 +19,7 @@ const int MODE_GRADIENT_2D = 4;
 const int MODE_OUTLINE_SOLID_COLOR = 5;
 
 const int AVG_STOPS = 4;
+const int AVG_SHAPE_DATA = 16;
 const float EDGE_OFFSET = 0.01;
 
 uniform int shape_count;
@@ -26,7 +27,10 @@ uniform int shape_count;
 uniform int shape[MAX_SHAPE_COUNT];
 uniform vec4 shape_rect[MAX_SHAPE_COUNT];
 uniform vec4 shape_rotation[MAX_SHAPE_COUNT];
-uniform vec4 shape_data[MAX_SHAPE_COUNT];
+
+uniform int shape_data_start[MAX_SHAPE_COUNT];
+uniform int shape_data_count[MAX_SHAPE_COUNT];
+uniform float shape_data[MAX_SHAPE_COUNT * AVG_SHAPE_DATA];
 
 uniform int shape_draw_mode[MAX_SHAPE_COUNT];
 uniform float shape_outline_width[MAX_SHAPE_COUNT];
@@ -147,7 +151,9 @@ vec4 draw_shape(vec2 uv, int index) {
 			sd = sd_circle(uv - vec2(0.5));
 			break;
 		case SHAPE_RECTANGLE:
-			sd = sd_rect(uv - vec2(0.5), shape_data[index].xy);
+			int rect_data_start = shape_data_start[index];
+			vec2 b = vec2(shape_data[rect_data_start], shape_data[rect_data_start + 1]);
+			sd = sd_rect(uv - vec2(0.5), b);
 
 			break;
 	}

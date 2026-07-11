@@ -20,8 +20,9 @@ extends Texture2D
 @export_storage var root_node: TextureNode
 @export_storage var shader: Shader
 
-const MAX_SHAPE_COUNT = 16;
-const AVG_GRADIENT_STOPS = 4;
+const MAX_SHAPE_COUNT = 16
+const AVG_GRADIENT_STOPS = 4
+const AVG_SHAPE_DATA = 16
 
 var initialized:= false
 
@@ -155,8 +156,12 @@ func _set_material_parameters() -> void:
 	shape_rect.resize(MAX_SHAPE_COUNT)
 	var shape_rotation:= PackedVector4Array()
 	shape_rotation.resize(MAX_SHAPE_COUNT)
-	var shape_data:= PackedVector4Array()
-	shape_data.resize(MAX_SHAPE_COUNT)
+	var shape_data_start:= PackedInt32Array()
+	shape_data_start.resize(MAX_SHAPE_COUNT)
+	var shape_data_count:= PackedInt32Array()
+	shape_data_count.resize(MAX_SHAPE_COUNT)
+	var shape_data:= PackedFloat32Array()
+	shape_data.resize(MAX_SHAPE_COUNT * AVG_SHAPE_DATA)
 	var shape_draw_mode:= PackedInt32Array()
 	shape_draw_mode.resize(MAX_SHAPE_COUNT)
 	var shape_outline_width:= PackedFloat32Array()
@@ -183,8 +188,9 @@ func _set_material_parameters() -> void:
 	var i:= 0
 	# If a node has both a fill and outline, they are split in 2 instances.
 	var repeating:= false
-	# Gradients are passed as slices.
+	# Gradient and shape data are passed as slices.
 	var stop_count_accum:= 0
+	var shape_data_count_accum:= 0
 	while(n >= 0 or repeating):
 		if repeating:
 			# Return to previous node.
@@ -205,8 +211,8 @@ func _set_material_parameters() -> void:
 				n -= 1
 				continue
 
-		var side_length:= node._get_width() as float
 		shape[i] = node._get_shape()
+		var side_length:= node._get_width() as float
 		var size:= Vector2(node._get_width(), node._get_height())
 		if repeating:
 			if not is_outline:
@@ -216,29 +222,43 @@ func _set_material_parameters() -> void:
 			else:
 				# We are done with this state, reset.
 				repeating = false
+
 		var rect:= Rect2(Vector2(node.position) - size / 2, size)
 		var tex_size:= Vector2(width, height)
 		rect = Rect2(rect.position / tex_size, rect.size / tex_size)
 		shape_rect[i] = Vector4(rect.position.x, rect.position.y, rect.size.x, rect.size.y)
+
 		var r:= Transform2D.IDENTITY.rotated(node.rotation)
 		shape_rotation[i] = Vector4(r.x.x, r.x.y, r.y.x, r.y.y)
-		shape_data[i] = node._get_shape_data()
+
+		var data_source:= node._get_shape_data()
+		var data_count:= data_source.size()
+		shape_data_start[i] = shape_data_count_accum
+		shape_data_count[i] = data_count
+		var data_source_index:= 0
+		for data_index in range(shape_data_count_accum, shape_data_count_accum + data_count):
+			shape_data[data_index] = data_source[data_source_index]
+			data_source_index += 1
+		shape_data_count_accum += data_count
+
 		shape_draw_mode[i] = 5 if is_outline else node.fill_mode # TODO: Rework outline mode data.
 		shape_outline_width[i] = node.outline_width / side_length
 		shape_color[i] = get_oklab(node.outline_color) if is_outline else get_oklab(node.fill_color)
 		var smoothing:= node.outline_smoothing if is_outline else node.fill_smoothing
 		shape_smoothing[i] = smoothing / side_length
+
 		var colors:= node.gradient.get_colors()
 		var stops:= node.gradient.get_stops()
 		var stop_count:= colors.size()
 		gradient_first_stop[i] = stop_count_accum
 		gradient_stop_count[i] = stop_count
-		var j:= 0
-		for k in range(stop_count_accum, stop_count_accum + stop_count):
-			gradient_colors[k] = colors[j]
-			gradient_stops[k] = stops[j]
-			j += 1
+		var stop_source_index:= 0
+		for stop_index in range(stop_count_accum, stop_count_accum + stop_count):
+			gradient_colors[stop_index] = colors[stop_source_index]
+			gradient_stops[stop_index] = stops[stop_source_index]
+			stop_source_index += 1
 		stop_count_accum += stop_count
+
 		var rot:= Transform2D.IDENTITY.rotated(node.linear_gradient_rotation)
 		match node.fill_mode:
 			TextureNodeShape.FillMode.LINEAR_GRADIENT:
@@ -255,6 +275,8 @@ func _set_material_parameters() -> void:
 	RenderingServer.material_set_param(material, "shape", shape)
 	RenderingServer.material_set_param(material, "shape_rect", shape_rect)
 	RenderingServer.material_set_param(material, "shape_rotation", shape_rotation)
+	RenderingServer.material_set_param(material, "shape_data_start", shape_data_start)
+	RenderingServer.material_set_param(material, "shape_data_count", shape_data_count)
 	RenderingServer.material_set_param(material, "shape_data", shape_data)
 	RenderingServer.material_set_param(material, "shape_draw_mode", shape_draw_mode)
 	RenderingServer.material_set_param(material, "shape_outline_width", shape_outline_width)
