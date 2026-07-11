@@ -194,9 +194,8 @@ func _set_material_parameters() -> void:
 		var node:= root_node.children[i] as TextureNodeShape
 		var side_length:= node._get_width() as float
 		shape[i] = node._get_shape()
-		var size:= Vector2i(node._get_width(), node._get_height())
-		@warning_ignore("integer_division")
-		var rect:= Rect2(Vector2i(node.position.round()) - size / 2, size)
+		var size:= Vector2(node._get_width(), node._get_height())
+		var rect:= Rect2(Vector2(node.position) - size / 2, size)
 		var tex_size:= Vector2(width, height)
 		rect = Rect2(rect.position / tex_size, rect.size / tex_size)
 		shape_rect[i] = Vector4(rect.position.x, rect.position.y, rect.size.x, rect.size.y)
