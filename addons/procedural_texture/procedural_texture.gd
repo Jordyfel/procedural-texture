@@ -171,22 +171,22 @@ func _set_material_parameters() -> void:
 	fill_mode.resize(MAX_SHAPE_COUNT)
 	var fill_color:= PackedVector4Array()
 	fill_color.resize(MAX_SHAPE_COUNT)
-	var fill_gradient_first_stop:= PackedInt32Array()
-	fill_gradient_first_stop.resize(MAX_SHAPE_COUNT)
-	var fill_gradient_stop_count:= PackedInt32Array()
-	fill_gradient_stop_count.resize(MAX_SHAPE_COUNT)
-	var fill_gradient_colors:= PackedVector4Array()
-	fill_gradient_colors.resize(MAX_SHAPE_COUNT * AVG_GRADIENT_STOPS)
-	var fill_gradient_stops:= PackedFloat32Array()
-	fill_gradient_stops.resize(MAX_SHAPE_COUNT * AVG_GRADIENT_STOPS)
+	var fill_smoothstep:= PackedFloat32Array()
+	fill_smoothstep.resize(MAX_SHAPE_COUNT)
+	var gradient_first_stop:= PackedInt32Array()
+	gradient_first_stop.resize(MAX_SHAPE_COUNT)
+	var gradient_stop_count:= PackedInt32Array()
+	gradient_stop_count.resize(MAX_SHAPE_COUNT)
+	var gradient_colors:= PackedVector4Array()
+	gradient_colors.resize(MAX_SHAPE_COUNT * AVG_GRADIENT_STOPS)
+	var gradient_stops:= PackedFloat32Array()
+	gradient_stops.resize(MAX_SHAPE_COUNT * AVG_GRADIENT_STOPS)
 	var linear_gradient_rotation:= PackedVector4Array()
 	linear_gradient_rotation.resize(MAX_SHAPE_COUNT)
 	var radial_gradient_origin:= PackedVector2Array()
 	radial_gradient_origin.resize(MAX_SHAPE_COUNT)
 	var radial_gradient_radius:= PackedFloat32Array()
 	radial_gradient_radius.resize(MAX_SHAPE_COUNT)
-	var fill_smoothstep:= PackedFloat32Array()
-	fill_smoothstep.resize(MAX_SHAPE_COUNT)
 
 	var count:= root_node.children.size()
 	var stop_count_accum:= 0
@@ -209,22 +209,22 @@ func _set_material_parameters() -> void:
 		fill_enabled[i] = node.fill_enabled as int
 		fill_mode[i] = node.fill_mode
 		fill_color[i] = get_oklab(node.fill_color)
-		var colors:= node.fill_gradient.get_colors()
-		var stops:= node.fill_gradient.get_stops()
+		fill_smoothstep[i] = node.fill_smoothing_factor / side_length
+		var colors:= node.gradient.get_colors()
+		var stops:= node.gradient.get_stops()
 		var stop_count:= colors.size()
-		fill_gradient_first_stop[i] = stop_count_accum
-		fill_gradient_stop_count[i] = stop_count
+		gradient_first_stop[i] = stop_count_accum
+		gradient_stop_count[i] = stop_count
 		var j:= 0
 		for k in range(stop_count_accum, stop_count_accum + stop_count):
-			fill_gradient_colors[k] = colors[j]
-			fill_gradient_stops[k] = stops[j]
+			gradient_colors[k] = colors[j]
+			gradient_stops[k] = stops[j]
 			j += 1
 		stop_count_accum += stop_count
-		var rot:= Transform2D.IDENTITY.rotated(node.fill_linear_gradient_rotation)
+		var rot:= Transform2D.IDENTITY.rotated(node.linear_gradient_rotation)
 		linear_gradient_rotation[i] = Vector4(rot.x.x, rot.x.y, rot.y.x, rot.y.y)
-		radial_gradient_origin[i] = node.fill_radial_gradient_origin
-		radial_gradient_radius[i] = node.fill_radial_gradient_radius
-		fill_smoothstep[i] = node.fill_smoothing_factor / side_length
+		radial_gradient_origin[i] = node.radial_gradient_origin
+		radial_gradient_radius[i] = node.radial_gradient_radius
 
 	RenderingServer.material_set_param(material, "shape_count", count)
 	RenderingServer.material_set_param(material, "shape", shape)
@@ -238,14 +238,14 @@ func _set_material_parameters() -> void:
 	RenderingServer.material_set_param(material, "fill_enabled", fill_enabled)
 	RenderingServer.material_set_param(material, "fill_mode", fill_mode)
 	RenderingServer.material_set_param(material, "fill_color", fill_color)
-	RenderingServer.material_set_param(material, "fill_gradient_first_stop", fill_gradient_first_stop)
-	RenderingServer.material_set_param(material, "fill_gradient_stop_count", fill_gradient_stop_count)
-	RenderingServer.material_set_param(material, "fill_gradient_colors", fill_gradient_colors)
-	RenderingServer.material_set_param(material, "fill_gradient_stops", fill_gradient_stops)
+	RenderingServer.material_set_param(material, "fill_smoothstep", fill_smoothstep)
+	RenderingServer.material_set_param(material, "gradient_first_stop", gradient_first_stop)
+	RenderingServer.material_set_param(material, "gradient_stop_count", gradient_stop_count)
+	RenderingServer.material_set_param(material, "gradient_colors", gradient_colors)
+	RenderingServer.material_set_param(material, "gradient_stops", gradient_stops)
 	RenderingServer.material_set_param(material, "linear_gradient_rotation", linear_gradient_rotation)
 	RenderingServer.material_set_param(material, "radial_gradient_origin", radial_gradient_origin)
 	RenderingServer.material_set_param(material, "radial_gradient_radius", radial_gradient_radius)
-	RenderingServer.material_set_param(material, "fill_smoothstep", fill_smoothstep)
 
 
 func get_oklab(color: Color) -> Vector4:

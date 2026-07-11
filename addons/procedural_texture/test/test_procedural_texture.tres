@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://dlee72psynlb7" path="res://addons/procedural_texture/shapes/rect_shape.gd" id="6_oshtt"]
 [ext_resource type="Shader" uid="uid://cki66x75vn1uk" path="res://addons/procedural_texture/shape.gdshader" id="7_oafep"]
 
-[sub_resource type="Resource" id="Resource_oshtt"]
+[sub_resource type="Resource" id="Resource_oafep"]
 script = ExtResource("2_le2ur")
 
 [sub_resource type="Resource" id="Resource_2dw4q"]
@@ -16,10 +16,10 @@ script = ExtResource("6_oshtt")
 rect = Vector2(128, 128)
 fill_enabled = true
 fill_color = Color(0, 0.34250757, 0.20950374, 1)
-fill_gradient = SubResource("Resource_oshtt")
-position = Vector2(97.28001, 73.728004)
+gradient = SubResource("Resource_oafep")
+position = Vector2(130.048, 122.880005)
 
-[sub_resource type="Resource" id="Resource_uh7ua"]
+[sub_resource type="Resource" id="Resource_oshtt"]
 script = ExtResource("2_le2ur")
 
 [sub_resource type="Resource" id="Resource_11slx"]
@@ -27,40 +27,20 @@ script = ExtResource("2_3obym")
 radius = 20.0
 fill_enabled = true
 fill_color = Color(0.33851996, 0.5340497, 0.8780784, 1)
-fill_gradient = SubResource("Resource_uh7ua")
-position = Vector2(163.1895, 83.5575)
-
-[sub_resource type="Resource" id="Resource_oafep"]
-script = ExtResource("3_oafep")
-color = Color(0.886346, 0.6391372, 0.49614385, 1)
-l = 0.767
-c = 0.09
-h = 51.0
-a = 1.0
-metadata/_custom_type_script = "uid://darr1s84rm8n"
-
-[sub_resource type="Resource" id="Resource_a20n7"]
-script = ExtResource("3_oafep")
-color = Color(0.22284256, 0.23581797, -0.24291919, 1)
-l = 0.337
-c = 0.15
-h = 114.0
-a = 1.0
-stop = 1.0
-metadata/_custom_type_script = "uid://darr1s84rm8n"
+gradient = SubResource("Resource_oshtt")
+position = Vector2(190.464, 50.176003)
 
 [sub_resource type="Resource" id="Resource_7ai0e"]
 script = ExtResource("2_le2ur")
-stops = Array[ExtResource("3_oafep")]([SubResource("Resource_oafep"), SubResource("Resource_a20n7")])
 
 [sub_resource type="Resource" id="Resource_kb2a5"]
 script = ExtResource("2_3obym")
 radius = 52.1
 fill_enabled = true
-fill_mode = 2
 fill_color = Color(0.6615226, 0.19154361, 0.29999837, 1)
-fill_gradient = SubResource("Resource_7ai0e")
-position = Vector2(95.232, 92.16)
+fill_smoothing_factor = 2.0
+gradient = SubResource("Resource_7ai0e")
+position = Vector2(81.920006, 167.936)
 
 [sub_resource type="Resource" id="Resource_ndh1u"]
 script = ExtResource("1_11slx")

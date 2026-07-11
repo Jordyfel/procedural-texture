@@ -45,29 +45,29 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 		fill_color = value
 		emit_changed()
 
-@export var fill_gradient:= OklchGradient.new():
-	set(value):
-		fill_gradient = value
-		emit_changed()
-
-@export_range(0, 360, 0.001, "radians_as_degrees") var fill_linear_gradient_rotation:= 0.0:
-	set(value):
-		fill_linear_gradient_rotation = value
-		emit_changed()
-
-@export var fill_radial_gradient_origin:= Vector2(0.5, 0.5):
-	set(value):
-		fill_radial_gradient_origin = value
-		emit_changed()
-
-@export_range(0, 1.0, 0.001, "or_greater", "prefer_slider") var fill_radial_gradient_radius:= 0.5:
-	set(value):
-		fill_radial_gradient_radius = value
-		emit_changed()
-
 @export_range(0, 10, 0.01, "or_greater", "prefer_slider") var fill_smoothing_factor:= 1.2:
 	set(value):
 		fill_smoothing_factor = value
+		emit_changed()
+
+@export var gradient:= OklchGradient.new():
+	set(value):
+		gradient = value
+		emit_changed()
+
+@export_range(0, 360, 0.001, "radians_as_degrees") var linear_gradient_rotation:= 0.0:
+	set(value):
+		linear_gradient_rotation = value
+		emit_changed()
+
+@export var radial_gradient_origin:= Vector2(0.5, 0.5):
+	set(value):
+		radial_gradient_origin = value
+		emit_changed()
+
+@export_range(0, 1.0, 0.001, "or_greater", "prefer_slider") var radial_gradient_radius:= 0.5:
+	set(value):
+		radial_gradient_radius = value
 		emit_changed()
 
 
