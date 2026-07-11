@@ -157,22 +157,14 @@ func _set_material_parameters() -> void:
 	shape_rotation.resize(MAX_SHAPE_COUNT)
 	var shape_data:= PackedVector4Array()
 	shape_data.resize(MAX_SHAPE_COUNT)
-	var outline_enabled:= PackedInt32Array()
-	outline_enabled.resize(MAX_SHAPE_COUNT)
-	var outline_width:= PackedFloat32Array()
-	outline_width.resize(MAX_SHAPE_COUNT)
-	var outline_color:= PackedVector4Array()
-	outline_color.resize(MAX_SHAPE_COUNT)
-	var outline_smoothstep:= PackedFloat32Array()
-	outline_smoothstep.resize(MAX_SHAPE_COUNT)
-	var fill_enabled:= PackedInt32Array()
-	fill_enabled.resize(MAX_SHAPE_COUNT)
-	var fill_mode:= PackedInt32Array()
-	fill_mode.resize(MAX_SHAPE_COUNT)
-	var fill_color:= PackedVector4Array()
-	fill_color.resize(MAX_SHAPE_COUNT)
-	var fill_smoothstep:= PackedFloat32Array()
-	fill_smoothstep.resize(MAX_SHAPE_COUNT)
+	var shape_draw_mode:= PackedInt32Array()
+	shape_draw_mode.resize(MAX_SHAPE_COUNT)
+	var shape_outline_width:= PackedFloat32Array()
+	shape_outline_width.resize(MAX_SHAPE_COUNT)
+	var shape_color:= PackedVector4Array()
+	shape_color.resize(MAX_SHAPE_COUNT)
+	var shape_smoothing:= PackedFloat32Array()
+	shape_smoothing.resize(MAX_SHAPE_COUNT)
 	var gradient_first_stop:= PackedInt32Array()
 	gradient_first_stop.resize(MAX_SHAPE_COUNT)
 	var gradient_stop_count:= PackedInt32Array()
@@ -184,13 +176,46 @@ func _set_material_parameters() -> void:
 	var gradient_transform_data:= PackedVector4Array()
 	gradient_transform_data.resize(MAX_SHAPE_COUNT)
 
-	var count:= root_node.children.size()
+	# Loop over the nodes in reverse order so that the instances are in sequential draw order.
+	# Node index.
+	var n:= root_node.children.size() - 1
+	# Instance index.
+	var i:= 0
+	# If a node has both a fill and outline, they are split in 2 instances.
+	var repeating:= false
+	# Gradients are passed as slices.
 	var stop_count_accum:= 0
-	for i in range(count - 1, -1, -1):
-		var node:= root_node.children[i] as TextureNodeShape
+	while(n >= 0 or repeating):
+		if repeating:
+			# Return to previous node.
+			n += 1
+
+		var node:= root_node.children[n] as TextureNodeShape
+
+		# Outline is above so always true when repeating.
+		var is_outline:= true
+		if not repeating:
+			if node.fill_enabled:
+				is_outline = false
+				if node.outline_enabled:
+					# If both are enabled, repeat.
+					repeating = true
+			elif not node.outline_enabled:
+				# If neither are enabled, skip the node.
+				n -= 1
+				continue
+
 		var side_length:= node._get_width() as float
 		shape[i] = node._get_shape()
 		var size:= Vector2(node._get_width(), node._get_height())
+		if repeating:
+			if not is_outline:
+				# If there will be an outline over this fill, reduce size.
+				var mult:= 1 - (node.outline_width / side_length / 2)
+				size *= Vector2(mult, mult)
+			else:
+				# We are done with this state, reset.
+				repeating = false
 		var rect:= Rect2(Vector2(node.position) - size / 2, size)
 		var tex_size:= Vector2(width, height)
 		rect = Rect2(rect.position / tex_size, rect.size / tex_size)
@@ -198,14 +223,11 @@ func _set_material_parameters() -> void:
 		var r:= Transform2D.IDENTITY.rotated(node.rotation)
 		shape_rotation[i] = Vector4(r.x.x, r.x.y, r.y.x, r.y.y)
 		shape_data[i] = node._get_shape_data()
-		outline_enabled[i] = node.outline_enabled as int
-		outline_width[i] = node.outline_width / side_length
-		outline_color[i] = get_oklab(node.outline_color)
-		outline_smoothstep[i] = node.outline_smoothing_factor / side_length
-		fill_enabled[i] = node.fill_enabled as int
-		fill_mode[i] = node.fill_mode
-		fill_color[i] = get_oklab(node.fill_color)
-		fill_smoothstep[i] = node.fill_smoothing_factor / side_length
+		shape_draw_mode[i] = 5 if is_outline else node.fill_mode # TODO: Rework outline mode data.
+		shape_outline_width[i] = node.outline_width / side_length
+		shape_color[i] = get_oklab(node.outline_color) if is_outline else get_oklab(node.fill_color)
+		var smoothing:= node.outline_smoothing if is_outline else node.fill_smoothing
+		shape_smoothing[i] = smoothing / side_length
 		var colors:= node.gradient.get_colors()
 		var stops:= node.gradient.get_stops()
 		var stop_count:= colors.size()
@@ -226,19 +248,18 @@ func _set_material_parameters() -> void:
 				gradient_transform_data[i].y = node.radial_gradient_origin.y
 				gradient_transform_data[i].z = node.radial_gradient_radius
 
-	RenderingServer.material_set_param(material, "shape_count", count)
+		n -= 1
+		i += 1
+
+	RenderingServer.material_set_param(material, "shape_count", i)
 	RenderingServer.material_set_param(material, "shape", shape)
 	RenderingServer.material_set_param(material, "shape_rect", shape_rect)
 	RenderingServer.material_set_param(material, "shape_rotation", shape_rotation)
 	RenderingServer.material_set_param(material, "shape_data", shape_data)
-	RenderingServer.material_set_param(material, "outline_enabled", outline_enabled)
-	RenderingServer.material_set_param(material, "outline_width", outline_width)
-	RenderingServer.material_set_param(material, "outline_color", outline_color)
-	RenderingServer.material_set_param(material, "outline_smoothstep", outline_smoothstep)
-	RenderingServer.material_set_param(material, "fill_enabled", fill_enabled)
-	RenderingServer.material_set_param(material, "fill_mode", fill_mode)
-	RenderingServer.material_set_param(material, "fill_color", fill_color)
-	RenderingServer.material_set_param(material, "fill_smoothstep", fill_smoothstep)
+	RenderingServer.material_set_param(material, "shape_draw_mode", shape_draw_mode)
+	RenderingServer.material_set_param(material, "shape_outline_width", shape_outline_width)
+	RenderingServer.material_set_param(material, "shape_color", shape_color)
+	RenderingServer.material_set_param(material, "shape_smoothing", shape_smoothing)
 	RenderingServer.material_set_param(material, "gradient_first_stop", gradient_first_stop)
 	RenderingServer.material_set_param(material, "gradient_stop_count", gradient_stop_count)
 	RenderingServer.material_set_param(material, "gradient_colors", gradient_colors)

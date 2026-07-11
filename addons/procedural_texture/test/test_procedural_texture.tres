@@ -17,7 +17,7 @@ rect = Vector2(128, 128)
 fill_enabled = true
 fill_color = Color(0, 0.34250757, 0.20950374, 1)
 gradient = SubResource("Resource_oafep")
-position = Vector2(130.048, 122.880005)
+position = Vector2(93.184006, 80.896)
 
 [sub_resource type="Resource" id="Resource_oshtt"]
 script = ExtResource("2_le2ur")
@@ -25,10 +25,11 @@ script = ExtResource("2_le2ur")
 [sub_resource type="Resource" id="Resource_11slx"]
 script = ExtResource("2_3obym")
 radius = 20.0
+outline_enabled = true
 fill_enabled = true
 fill_color = Color(0.33851996, 0.5340497, 0.8780784, 1)
 gradient = SubResource("Resource_oshtt")
-position = Vector2(190.464, 50.176003)
+position = Vector2(159.744, 130.048)
 
 [sub_resource type="Resource" id="Resource_7ai0e"]
 script = ExtResource("2_le2ur")
@@ -36,11 +37,12 @@ script = ExtResource("2_le2ur")
 [sub_resource type="Resource" id="Resource_kb2a5"]
 script = ExtResource("2_3obym")
 radius = 52.1
+outline_width = 4.0
+outline_color = Color(0.29586652, 0.2958665, 0.2958665, 1)
 fill_enabled = true
 fill_color = Color(0.6615226, 0.19154361, 0.29999837, 1)
-fill_smoothing_factor = 2.0
 gradient = SubResource("Resource_7ai0e")
-position = Vector2(81.920006, 167.936)
+position = Vector2(179.20001, 116.73601)
 
 [sub_resource type="Resource" id="Resource_ndh1u"]
 script = ExtResource("1_11slx")

@@ -16,6 +16,7 @@ const int MODE_DISTANCE_GRADIENT = 1;
 const int MODE_LINEAR_GRADIENT = 2;
 const int MODE_RADIAL_GRADIENT = 3;
 const int MODE_GRADIENT_2D = 4;
+const int MODE_OUTLINE_SOLID_COLOR = 5;
 
 const int AVG_STOPS = 4;
 const float EDGE_OFFSET = 0.01;
@@ -27,15 +28,10 @@ uniform vec4 shape_rect[MAX_SHAPE_COUNT];
 uniform vec4 shape_rotation[MAX_SHAPE_COUNT];
 uniform vec4 shape_data[MAX_SHAPE_COUNT];
 
-uniform bool outline_enabled[MAX_SHAPE_COUNT];
-uniform float outline_width[MAX_SHAPE_COUNT];
-uniform vec4 outline_color[MAX_SHAPE_COUNT];
-uniform float outline_smoothstep[MAX_SHAPE_COUNT];
-
-uniform bool fill_enabled[MAX_SHAPE_COUNT];
-uniform int fill_mode[MAX_SHAPE_COUNT];
-uniform vec4 fill_color[MAX_SHAPE_COUNT];
-uniform float fill_smoothstep[MAX_SHAPE_COUNT];
+uniform int shape_draw_mode[MAX_SHAPE_COUNT];
+uniform float shape_outline_width[MAX_SHAPE_COUNT];
+uniform vec4 shape_color[MAX_SHAPE_COUNT];
+uniform float shape_smoothing[MAX_SHAPE_COUNT];
 
 uniform int gradient_first_stop[MAX_SHAPE_COUNT];
 uniform int gradient_stop_count[MAX_SHAPE_COUNT];
@@ -105,9 +101,9 @@ vec4 fill_gradient(int index, float gradient) {
 
 vec4 make_fill_color(vec2 uv, int index, float gradient, float offset) {
 	vec4 color;
-	switch (fill_mode[index]) {
+	switch (shape_draw_mode[index]) {
 		case MODE_SOLID_COLOR:
-			color = fill_color[index];
+			color = shape_color[index];
 			break;
 		case MODE_DISTANCE_GRADIENT:
 			color = fill_gradient(index, gradient);
@@ -130,7 +126,7 @@ vec4 make_fill_color(vec2 uv, int index, float gradient, float offset) {
 			break;
 	}
 
-	color.a *= fill_mask(gradient, fill_smoothstep[index], offset);
+	color.a *= fill_mask(gradient, shape_smoothing[index], offset);
 	return color;
 }
 
@@ -164,19 +160,12 @@ vec4 draw_shape(vec2 uv, int index) {
 		return vec4(0.0);
 	}
 
-	if (outline_enabled[index]) {
-		color = outline_color[index];
-		color.a *= outline_mask(gradient, outline_width[index], outline_smoothstep[index], EDGE_OFFSET);
-	}
-
-	if (fill_enabled[index]) {
-		if (!outline_enabled[index]) {
-			color = make_fill_color(uv, index, gradient, EDGE_OFFSET);
-		} else { // If both fill and outline are enabled, blend the outline over the fill.
-			float offset = EDGE_OFFSET + outline_width[index] / 2.0;
-			vec4 fill_result = make_fill_color(uv, index, gradient, offset);
-			color = blend(color, fill_result);
-		}
+	if (shape_draw_mode[index] == MODE_OUTLINE_SOLID_COLOR) {
+		color = shape_color[index];
+		float width = shape_outline_width[index];
+		color.a *= outline_mask(gradient, width , shape_smoothing[index], EDGE_OFFSET);
+	} else {
+		color = make_fill_color(uv, index, gradient, EDGE_OFFSET);
 	}
 
 	return color;

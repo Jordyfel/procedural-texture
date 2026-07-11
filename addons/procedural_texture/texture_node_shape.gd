@@ -23,9 +23,9 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 		outline_color = value
 		emit_changed()
 
-@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var outline_smoothing_factor:= 1.2:
+@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var outline_smoothing:= 1.2:
 	set(value):
-		outline_smoothing_factor = value
+		outline_smoothing = value
 		emit_changed()
 
 
@@ -45,9 +45,9 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 		fill_color = value
 		emit_changed()
 
-@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var fill_smoothing_factor:= 1.2:
+@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var fill_smoothing:= 1.2:
 	set(value):
-		fill_smoothing_factor = value
+		fill_smoothing = value
 		emit_changed()
 
 @export var gradient:= OklchGradient.new():
