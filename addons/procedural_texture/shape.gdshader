@@ -41,9 +41,13 @@ uniform int gradient_first_stop[MAX_SHAPE_COUNT];
 uniform int gradient_stop_count[MAX_SHAPE_COUNT];
 uniform vec4 gradient_colors[MAX_SHAPE_COUNT * AVG_STOPS];
 uniform float gradient_stops[MAX_SHAPE_COUNT * AVG_STOPS];
-uniform vec4 linear_gradient_rotation[MAX_SHAPE_COUNT];
-uniform vec2 radial_gradient_origin[MAX_SHAPE_COUNT];
-uniform float radial_gradient_radius[MAX_SHAPE_COUNT];
+
+// vec4 linear_gradient_rotation
+// OR
+// vec2 radial_gradient_origin
+// float radial_gradient_radius
+uniform vec4 gradient_transform_data[MAX_SHAPE_COUNT];
+
 
 
 vec3 linear_to_srgb(vec3 color) {
@@ -109,13 +113,15 @@ vec4 make_fill_color(vec2 uv, int index, float gradient, float offset) {
 			color = fill_gradient(index, gradient);
 			break;
 		case MODE_LINEAR_GRADIENT:
-			vec4 r = linear_gradient_rotation[index];
+			vec4 r = gradient_transform_data[index];
 			mat2 rotation = mat2(vec2(r.x, r.y), vec2(r.z, r.w));
 			uv = rotation * (uv - 0.5) + 0.5;
 			color = fill_gradient(index, uv.x);
 			break;
 		case MODE_RADIAL_GRADIENT:
-			float radial_sd = length(uv - radial_gradient_origin[index]) - radial_gradient_radius[index];
+			vec2 origin = gradient_transform_data[index].xy;
+			float radius = gradient_transform_data[index].z;
+			float radial_sd = length(uv - origin) - radius;
 			float radial_gradient = max(-radial_sd * 2.0, 0.0);
 			color = fill_gradient(index, radial_gradient);
 			break;
