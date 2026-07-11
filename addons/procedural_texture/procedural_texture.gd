@@ -178,6 +178,8 @@ func _set_material_parameters() -> void:
 	gradient_colors.resize(MAX_SHAPE_COUNT * AVG_GRADIENT_STOPS)
 	var gradient_stops:= PackedFloat32Array()
 	gradient_stops.resize(MAX_SHAPE_COUNT * AVG_GRADIENT_STOPS)
+	var gradient_stop_origins:= PackedVector2Array()
+	gradient_stop_origins.resize(MAX_SHAPE_COUNT * AVG_GRADIENT_STOPS)
 	var gradient_transform_data:= PackedVector4Array()
 	gradient_transform_data.resize(MAX_SHAPE_COUNT)
 
@@ -249,6 +251,7 @@ func _set_material_parameters() -> void:
 
 		var colors:= node.gradient.get_colors()
 		var stops:= node.gradient.get_stops()
+		var stop_origins:= node.gradient.get_stop_origins()
 		var stop_count:= colors.size()
 		gradient_first_stop[i] = stop_count_accum
 		gradient_stop_count[i] = stop_count
@@ -256,6 +259,7 @@ func _set_material_parameters() -> void:
 		for stop_index in range(stop_count_accum, stop_count_accum + stop_count):
 			gradient_colors[stop_index] = colors[stop_source_index]
 			gradient_stops[stop_index] = stops[stop_source_index]
+			gradient_stop_origins[stop_index] = stop_origins[stop_source_index]
 			stop_source_index += 1
 		stop_count_accum += stop_count
 
@@ -286,6 +290,7 @@ func _set_material_parameters() -> void:
 	RenderingServer.material_set_param(material, "gradient_stop_count", gradient_stop_count)
 	RenderingServer.material_set_param(material, "gradient_colors", gradient_colors)
 	RenderingServer.material_set_param(material, "gradient_stops", gradient_stops)
+	RenderingServer.material_set_param(material, "gradient_stop_origins", gradient_stop_origins)
 	RenderingServer.material_set_param(material, "gradient_transform_data", gradient_transform_data)
 
 

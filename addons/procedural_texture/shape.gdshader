@@ -37,10 +37,12 @@ uniform float shape_outline_width[MAX_SHAPE_COUNT];
 uniform vec4 shape_color[MAX_SHAPE_COUNT];
 uniform float shape_smoothing[MAX_SHAPE_COUNT];
 
+// Stops are interpreded as weights for 2D gradients.
 uniform int gradient_first_stop[MAX_SHAPE_COUNT];
 uniform int gradient_stop_count[MAX_SHAPE_COUNT];
 uniform vec4 gradient_colors[MAX_SHAPE_COUNT * AVG_STOPS];
 uniform float gradient_stops[MAX_SHAPE_COUNT * AVG_STOPS];
+uniform vec2 gradient_stop_origins[MAX_SHAPE_COUNT * AVG_STOPS];
 
 // vec4 linear_gradient_rotation
 // OR

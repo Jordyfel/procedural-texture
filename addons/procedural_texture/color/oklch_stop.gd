@@ -28,6 +28,9 @@ var color: Color
 
 @export_range(0.0, 1.0, 0.001, "prefer_slider") var stop: float
 
+## Used in 2D gradients. TODO: Implement, and add weights property to encode into stops.
+@export var stop_origin: Vector2
+
 
 func oklch_to_srgb() -> Color:
 	var oklch:= Oklch.new(l, c, h, a)
