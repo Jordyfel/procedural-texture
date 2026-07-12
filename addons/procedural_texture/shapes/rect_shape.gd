@@ -5,7 +5,7 @@ extends TextureNodeShape
 @export var rect:= Vector2(10, 10):
 	set(value):
 		rect = value
-		material_parameters_changed.emit([&"shape_data"])
+		material_parameters_changed.emit([&"shape_rect", &"shape_data"])
 
 
 func _set_parameter(

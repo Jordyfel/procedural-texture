@@ -5,7 +5,7 @@ extends TextureNodeShape
 @export_range(0, 512, 0.01, "or_greater", "prefer_slider") var radius:= 10.0:
 	set(value):
 		radius = value
-		emit_changed()
+		material_parameters_changed.emit([&"shape_rect"])
 
 
 func _get_shape() -> Shape:
