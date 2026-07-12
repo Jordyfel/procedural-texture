@@ -28,11 +28,7 @@ func _set_parameter(
 ) -> void:
 	match param_name:
 		&"shape_rotation":
-			var r:= Transform2D.IDENTITY.rotated(rotation)
-			param.encode_float(instance_index * 16 + 0, r.x.x)
-			param.encode_float(instance_index * 16 + 4, r.x.y)
-			param.encode_float(instance_index * 16 + 8, r.y.x)
-			param.encode_float(instance_index * 16 + 12, r.y.y)
+			param.encode_float(instance_index * 4, rotation)
 
 
 func _get_name() -> String:

@@ -162,20 +162,18 @@ func _set_parameter(
 			slice_accums[&"stop_count"] = first_stop + stop_origins.size() / 2
 
 		&"gradient_transform_data":
-			var gradient_transform_data:= Vector4()
+			var gradient_transform_data:= Vector3()
 			match fill_mode:
 				FillMode.LINEAR_GRADIENT:
-					var rot:= Transform2D.IDENTITY.rotated(linear_gradient_rotation)
-					gradient_transform_data = Vector4(rot.x.x, rot.x.y, rot.y.x, rot.y.y)
+					gradient_transform_data.x = linear_gradient_rotation
 				FillMode.RADIAL_GRADIENT:
 					gradient_transform_data.x = radial_gradient_origin.x
 					gradient_transform_data.y = radial_gradient_origin.y
 					gradient_transform_data.z = radial_gradient_radius
 
-			param.encode_float(instance_index * 16 + 0, gradient_transform_data.x)
-			param.encode_float(instance_index * 16 + 4, gradient_transform_data.y)
-			param.encode_float(instance_index * 16 + 8, gradient_transform_data.z)
-			param.encode_float(instance_index * 16 + 12, gradient_transform_data.w)
+			param.encode_float(instance_index * 12 + 0, gradient_transform_data.x)
+			param.encode_float(instance_index * 12 + 4, gradient_transform_data.y)
+			param.encode_float(instance_index * 12 + 8, gradient_transform_data.z)
 
 
 func get_oklab(color: Color) -> Vector4:
