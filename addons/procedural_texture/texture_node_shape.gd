@@ -40,7 +40,7 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 		fill_color = value
 		material_parameters_changed.emit([&"shape_color"])
 
-@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var smoothing:= 4.0:
+@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var smoothing:= 2.8:
 	set(value):
 		smoothing = value
 		material_parameters_changed.emit([&"shape_smoothing"])
