@@ -41,7 +41,3 @@ func _get_height() -> int:
 
 func _get_width() -> int:
 	return 256
-
-
-func _get_shader() -> Shader:
-	return null

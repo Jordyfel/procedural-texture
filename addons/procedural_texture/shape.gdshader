@@ -51,7 +51,6 @@ uniform vec2 gradient_stop_origins[MAX_SHAPE_COUNT * AVG_STOPS];
 uniform vec3 gradient_transform_data[MAX_SHAPE_COUNT];
 
 
-
 vec3 linear_to_srgb(vec3 color) {
 	const vec3 a = vec3(0.055f);
 	return mix((vec3(1.0f) + a) * pow(color.rgb, vec3(1.0f / 2.4f)) - a, 12.92f * color.rgb,

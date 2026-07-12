@@ -31,6 +31,7 @@ var texture: RID
 var material: RID
 var dummy_source: RID
 
+
 func _init() -> void:
 	var image:= Image.create_empty(2, 2, false, Image.Format.FORMAT_RGBA8)
 	image.fill(Color.WHITE)
