@@ -154,13 +154,12 @@ vec4 draw_shape(vec2 uv, int index) {
 	float sd;
 	switch (shape[index]) {
 		case SHAPE_CIRCLE:
-			sd = sd_circle(uv - vec2(0.5));
+			sd = sdCircle(uv - vec2(0.5), 0.5);
 			break;
 		case SHAPE_RECTANGLE:
 			int rect_data_start = shape_data_start[index];
 			vec2 b = vec2(shape_data[rect_data_start], shape_data[rect_data_start + 1]);
-			sd = sd_rect(uv - vec2(0.5), b);
-
+			sd = sdBox(uv - vec2(0.5), b);
 			break;
 	}
 
