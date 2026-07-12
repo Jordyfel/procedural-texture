@@ -176,33 +176,27 @@ func _set_material_parameter(param_name: StringName) -> int:
 	var node_index:= root_node.children.size() - 1
 	var instance_index:= 0
 	# If a node has both a fill and outline, they are split in 2 instances.
-	var splitting:= false
+	var outline_instance:= false
 	# Gradient and shape data are passed as slices.
 	var slice_accums: Dictionary[StringName, int] = {}
-	while(node_index >= 0 or splitting):
-		if splitting:
+	while(node_index >= 0 or outline_instance):
+		if outline_instance:
 			# Return to previous node.
 			node_index += 1
 
 		var node:= root_node.children[node_index] as TextureNodeShape
 
-		# Outline is above so always true when splitting.
-		var is_outline:= true
-		if not splitting:
-			if node.fill_enabled:
-				is_outline = false
-				if node.outline_enabled:
-					# If both are enabled, split.
-					splitting = true
-			elif not node.outline_enabled:
-				# If neither are enabled, skip the node.
-				node_index -= 1
-				continue
+		if not node.fill_enabled and not node.outline_enabled:
+			node_index -= 1
+			node = root_node.children[node_index]
 
-		node._set_parameter(param_name, param, instance_index, splitting and is_outline, slice_accums)
+		node._set_parameter(param_name, param, instance_index, outline_instance, slice_accums)
 
-		if is_outline:
-			splitting = false
+		if not outline_instance:
+			if node.fill_enabled and node.outline_enabled:
+				outline_instance = true
+		else:
+			outline_instance = false
 
 		node_index -= 1
 		instance_index += 1
