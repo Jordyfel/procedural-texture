@@ -4,11 +4,14 @@ extends Resource
 
 @export var stops: Array[OklchStop] = []
 
-func get_colors() -> PackedVector4Array:
-	var colors:= PackedVector4Array()
+func get_colors() -> PackedFloat32Array:
+	var colors:= PackedFloat32Array()
 	for stop in stops:
 		var oklab:= Oklch.oklch_to_oklab(Oklch.new(stop.l, stop.c, stop.h, stop.a))
-		colors.push_back(Vector4(oklab.l, oklab.a, oklab.b, oklab.alpha))
+		colors.push_back(oklab.l)
+		colors.push_back(oklab.a)
+		colors.push_back(oklab.b)
+		colors.push_back(oklab.alpha)
 
 	return colors
 
@@ -21,9 +24,10 @@ func get_stops() -> PackedFloat32Array:
 	return stops_
 
 
-func get_stop_origins() -> PackedVector2Array:
-	var stop_origins:= PackedVector2Array()
+func get_stop_origins() -> PackedFloat32Array:
+	var stop_origins:= PackedFloat32Array()
 	for stop in stops:
-		stop_origins.push_back(stop.stop_origin)
+		stop_origins.push_back(stop.stop_origin.x)
+		stop_origins.push_back(stop.stop_origin.y)
 
 	return stop_origins
