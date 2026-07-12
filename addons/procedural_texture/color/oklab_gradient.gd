@@ -1,17 +1,17 @@
 @tool
-class_name OklchGradient
+class_name OklabGradient
 extends Resource
 
-@export var stops: Array[OklchStop] = []
+@export var stops: Array[OklabStop] = []
 
 func get_colors() -> PackedFloat32Array:
 	var colors:= PackedFloat32Array()
 	for stop in stops:
-		var oklab:= Oklch.oklch_to_oklab(Oklch.new(stop.l, stop.c, stop.h, stop.a))
-		colors.push_back(oklab.l)
-		colors.push_back(oklab.a)
+		var oklab:= Oklab.oklch_to_oklab(Color(stop.l, stop.c, stop.h, stop.a))
+		colors.push_back(oklab.r)
+		colors.push_back(oklab.g)
 		colors.push_back(oklab.b)
-		colors.push_back(oklab.alpha)
+		colors.push_back(oklab.a)
 
 	return colors
 

@@ -1,5 +1,5 @@
 @tool
-class_name OklchStop
+class_name OklabStop
 extends Resource
 
 @export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_READ_ONLY)
@@ -33,5 +33,5 @@ var color: Color
 
 
 func oklch_to_srgb() -> Color:
-	var oklch:= Oklch.new(l, c, h, a)
-	return Oklch.oklab_to_linear(Oklch.oklch_to_oklab(oklch)).linear_to_srgb()
+	var oklch:= Color(l, c, h, a)
+	return Oklab.oklab_to_linear(Oklab.oklch_to_oklab(oklch)).linear_to_srgb()

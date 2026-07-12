@@ -45,7 +45,7 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 		smoothing = value
 		material_parameters_changed.emit([&"shape_smoothing"])
 
-@export var gradient:= OklchGradient.new()
+@export var gradient:= OklabGradient.new()
 
 @export_range(0, 360, 0.001, "radians_as_degrees") var linear_gradient_rotation:= 0.0:
 	set(value):
@@ -112,11 +112,12 @@ func _set_parameter(
 
 		&"shape_color":
 			var is_outline:= not fill_enabled or outline_instance
-			var color := get_oklab(outline_color) if is_outline else get_oklab(fill_color)
-			param.encode_float(instance_index * 16 + 0, color.x)
-			param.encode_float(instance_index * 16 + 4, color.y)
-			param.encode_float(instance_index * 16 + 8, color.z)
-			param.encode_float(instance_index * 16 + 12, color.w)
+			var color := outline_color if is_outline else fill_color
+			color = Oklab.linear_to_oklab(color.srgb_to_linear())
+			param.encode_float(instance_index * 16 + 0, color.r)
+			param.encode_float(instance_index * 16 + 4, color.g)
+			param.encode_float(instance_index * 16 + 8, color.b)
+			param.encode_float(instance_index * 16 + 12, color.a)
 
 		&"shape_smoothing":
 			param.encode_float(instance_index * 4, smoothing / _get_width() as float)
@@ -178,11 +179,6 @@ func _set_parameter(
 			param.encode_float(instance_index * 12 + 0, gradient_transform_data.x)
 			param.encode_float(instance_index * 12 + 4, gradient_transform_data.y)
 			param.encode_float(instance_index * 12 + 8, gradient_transform_data.z)
-
-
-func get_oklab(color: Color) -> Vector4:
-	var oklab:= Oklch.linear_to_oklab(color.srgb_to_linear())
-	return Vector4(oklab.l, oklab.a, oklab.b, oklab.alpha)
 
 
 func _get_shape() -> Shape:

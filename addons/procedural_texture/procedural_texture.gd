@@ -49,12 +49,12 @@ func _initialize() -> void:
 	initialized = true
 	shader = load("res://addons/procedural_texture/shape.gdshader")
 	RenderingServer.material_set_shader(material, shader.get_rid())
-	var bg:= get_oklab(background_color)
+	var bg:= Oklab.linear_to_oklab(background_color.srgb_to_linear())
 	texture = RenderingServer.texture_drawable_create(
 		width,
 		height,
 		RenderingServer.TEXTURE_DRAWABLE_FORMAT_RGBA8,
-		Color(bg.x, bg.y, bg.z, bg.w)
+		bg
 	)
 
 	for node in root_node.children:
@@ -72,12 +72,12 @@ func _on_size_changed() -> void:
 	for node in root_node.children:
 		node.root_texture_size = Vector2(width, height)
 
-	var bg:= get_oklab(background_color)
+	var bg:= Oklab.linear_to_oklab(background_color.srgb_to_linear())
 	var new_texture:= RenderingServer.texture_drawable_create(
 		width,
 		height,
 		RenderingServer.TEXTURE_DRAWABLE_FORMAT_RGBA8,
-		Color(bg.x, bg.y, bg.z, bg.w)
+		bg
 	)
 
 	RenderingServer.texture_replace(texture, new_texture)
@@ -99,12 +99,12 @@ func _on_node_material_parameter_changed(param_names: Array) -> void:
 
 
 func update() -> void:
-	var bg:= get_oklab(background_color)
+	var bg:= Oklab.linear_to_oklab(background_color.srgb_to_linear())
 	RenderingServer.texture_drawable_blit_rect(
 		[texture],
 		Rect2i(Vector2i.ZERO, Vector2i(width, height)),
 		material,
-		Color(bg.x, bg.y, bg.z, bg.w),
+		bg,
 		[dummy_source]
 	)
 
@@ -165,11 +165,6 @@ func _draw_rect_region(to_ci: RID, rect: Rect2, src_rect: Rect2,
 		modulate: Color, transpose: bool, clip_uv: bool) -> void:
 	RenderingServer.canvas_item_add_texture_rect_region(
 		to_ci, rect, texture, src_rect, modulate, transpose, clip_uv)
-
-
-func get_oklab(color: Color) -> Vector4:
-	var oklab:= Oklch.linear_to_oklab(color.srgb_to_linear())
-	return Vector4(oklab.l, oklab.a, oklab.b, oklab.alpha)
 
 
 func _set_material_parameter(param_name: StringName) -> int:
