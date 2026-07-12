@@ -122,15 +122,21 @@ func _set_parameter(
 			param.encode_float(instance_index * 4, smoothing / _get_width() as float)
 
 		&"gradient_first_stop":
+			var stop_count:= gradient.stops.size()
+			# If outline instance, record a slice to previous instances data.
+			var offset:= 0 if not outline_instance else -stop_count
 			var first_stop: int = slice_accums.get_or_add(&"stop_count", 0)
-			param.encode_s32(instance_index * 4, first_stop)
-			slice_accums[&"stop_count"] = first_stop + gradient.stops.size()
+			param.encode_s32(instance_index * 4, first_stop + offset)
+			slice_accums[&"stop_count"] = first_stop + offset + gradient.stops.size()
 
 		&"gradient_stop_count":
 			var stop_count:= gradient.stops.size()
 			param.encode_s32(instance_index * 4, stop_count)
 
 		&"gradient_colors":
+			if outline_instance:
+				return
+
 			var first_stop: int = slice_accums.get_or_add(&"stop_count", 0)
 			var colors:= gradient.get_colors()
 			for i in colors.size():
@@ -139,6 +145,9 @@ func _set_parameter(
 			slice_accums[&"stop_count"] = first_stop + colors.size() / 4
 
 		&"gradient_stops":
+			if outline_instance:
+				return
+
 			var first_stop: int = slice_accums.get_or_add(&"stop_count", 0)
 			var stops:= gradient.get_stops()
 			for i in stops.size():
@@ -146,6 +155,9 @@ func _set_parameter(
 			slice_accums[&"stop_count"] = first_stop + stops.size()
 
 		&"gradient_stop_origins":
+			if outline_instance:
+				return
+
 			var first_stop: int = slice_accums.get_or_add(&"stop_count", 0)
 			var stop_origins:= gradient.get_stop_origins()
 			for i in stop_origins.size():

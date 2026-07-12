@@ -12,21 +12,26 @@ func _set_parameter(
 	param_name: StringName,
 	param: PackedByteArray,
 	instance_index: int,
-	splitting: bool,
+	outline_instance: bool,
 	slice_accums: Dictionary[StringName, int]
 ) -> void:
-	super(param_name, param, instance_index, splitting, slice_accums)
+	super(param_name, param, instance_index, outline_instance, slice_accums)
 	match param_name:
 		&"shape_data_start":
+			# If outline instance, record a slice to previous instances data.
+			var offset:= 0 if not outline_instance else -2
 			var data_start: int = slice_accums.get_or_add(&"shape_data_count", 0)
-			param.encode_s32(instance_index * 4, data_start)
-			slice_accums[&"shape_data_count"] = data_start + 2
+			param.encode_s32(instance_index * 4, data_start + offset)
+			slice_accums[&"shape_data_count"] = data_start + offset + 2
 
 		&"shape_data_count":
 			var data_count:= 2
 			param.encode_s32(instance_index * 4, data_count)
 
 		&"shape_data":
+			if outline_instance:
+				return
+
 			var data_start: int = slice_accums.get_or_add(&"shape_data_count", 0)
 			var uv_rect: Vector2 = rect / max(rect.x, rect.y) / 2
 			param.encode_float(data_start * 4 + 0, uv_rect.x)
