@@ -24,8 +24,6 @@ extends Texture2D
 @export_storage var shader: Shader
 
 const MAX_SHAPE_COUNT = 16
-const AVG_GRADIENT_STOPS = 4
-const AVG_SHAPE_DATA = 16
 
 var initialized:= false
 
