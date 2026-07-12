@@ -23,11 +23,6 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 		outline_color = value
 		material_parameters_changed.emit([&"shape_color"])
 
-@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var outline_smoothing:= 4.0:
-	set(value):
-		outline_smoothing = value
-		material_parameters_changed.emit([&"shape_smoothing"])
-
 
 @export_group("Fill", "fill")
 @export_custom(PROPERTY_HINT_GROUP_ENABLE,"") var fill_enabled:= false:
@@ -45,9 +40,9 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 		fill_color = value
 		material_parameters_changed.emit([&"shape_color"])
 
-@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var fill_smoothing:= 4.0:
+@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var smoothing:= 4.0:
 	set(value):
-		fill_smoothing = value
+		smoothing = value
 		material_parameters_changed.emit([&"shape_smoothing"])
 
 @export var gradient:= OklchGradient.new()
@@ -124,10 +119,7 @@ func _set_parameter(
 			param.encode_float(instance_index * 16 + 12, color.w)
 
 		&"shape_smoothing":
-			var is_outline:= not fill_enabled or outline_instance
-			var smoothing:= outline_smoothing if is_outline else fill_smoothing
-			smoothing /= _get_width() as float
-			param.encode_float(instance_index * 4, smoothing)
+			param.encode_float(instance_index * 4, smoothing / _get_width() as float)
 
 		&"gradient_first_stop":
 			var first_stop: int = slice_accums.get_or_add(&"stop_count", 0)
