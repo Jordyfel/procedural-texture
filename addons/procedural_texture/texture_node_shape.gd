@@ -23,7 +23,7 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 		outline_color = value
 		material_parameters_changed.emit([&"shape_color"])
 
-@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var outline_smoothing:= 1.2:
+@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var outline_smoothing:= 4.0:
 	set(value):
 		outline_smoothing = value
 		material_parameters_changed.emit([&"shape_smoothing"])
@@ -45,7 +45,7 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 		fill_color = value
 		material_parameters_changed.emit([&"shape_color"])
 
-@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var fill_smoothing:= 1.2:
+@export_range(0, 10, 0.01, "or_greater", "prefer_slider") var fill_smoothing:= 4.0:
 	set(value):
 		fill_smoothing = value
 		material_parameters_changed.emit([&"shape_smoothing"])
