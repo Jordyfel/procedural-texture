@@ -175,7 +175,3 @@ func get_oklab(color: Color) -> Vector4:
 
 func _get_shape() -> Shape:
 	return Shape.CIRCLE
-
-
-func _get_shape_data() -> PackedFloat32Array:
-	return PackedFloat32Array()
