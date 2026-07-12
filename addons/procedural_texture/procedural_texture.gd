@@ -18,7 +18,7 @@ extends Texture2D
 		if not initialized:
 			return
 
-		update()
+		_redraw()
 
 @export_storage var root_node: TextureNode
 @export_storage var shader: Shader
@@ -61,8 +61,29 @@ func _initialize() -> void:
 		node.root_texture_size = Vector2(width, height)
 		node.material_parameters_changed.connect(_on_node_material_parameter_changed)
 
-	set_all_material_parameters()
 	update()
+
+
+func update() -> void:
+	_set_instance_material_parameters()
+	for param_name in ShapeMaterialParameters.array_parameter_names:
+		_set_material_parameter(param_name)
+
+	_redraw()
+
+
+func _redraw() -> void:
+	var bg:= Oklab.linear_to_oklab(background_color.srgb_to_linear())
+	RenderingServer.texture_drawable_blit_rect(
+		[texture],
+		Rect2i(Vector2i.ZERO, Vector2i(width, height)),
+		material,
+		bg,
+		[dummy_source]
+	)
+
+	RenderingServer.texture_drawable_generate_mipmaps(texture)
+	emit_changed()
 
 
 func _on_size_changed() -> void:
@@ -91,25 +112,59 @@ func _on_node_material_parameter_changed(param_names: Array) -> void:
 
 	for param_name: StringName in param_names:
 		if param_name == &"instance":
-			set_instance_material_parameters()
+			_set_instance_material_parameters()
 		else:
 			_set_material_parameter(param_name)
 
-	update()
+	_redraw()
 
 
-func update() -> void:
-	var bg:= Oklab.linear_to_oklab(background_color.srgb_to_linear())
-	RenderingServer.texture_drawable_blit_rect(
-		[texture],
-		Rect2i(Vector2i.ZERO, Vector2i(width, height)),
-		material,
-		bg,
-		[dummy_source]
-	)
+func _set_instance_material_parameters() -> void:
+	var instance_count:= 0
+	for param_name in ShapeMaterialParameters.instance_parameter_names:
+		instance_count = _set_material_parameter(param_name)
 
-	RenderingServer.texture_drawable_generate_mipmaps(texture)
-	emit_changed()
+	RenderingServer.material_set_param(material, "shape_count", instance_count)
+
+
+func _set_material_parameter(param_name: StringName) -> int:
+	var param:= PackedByteArray()
+	var param_size:= ShapeMaterialParameters.material_parameter_size_in_bytes_map[param_name]
+	param.resize(param_size * MAX_SHAPE_COUNT)
+
+	# Loop over the nodes in reverse order so that the instances are in sequential draw order.
+	var node_index:= root_node.children.size() - 1
+	var instance_index:= 0
+	# If a node has both a fill and outline, they are split in 2 instances.
+	var outline_instance:= false
+	# Gradient and shape data are passed as slices.
+	var slice_accums: Dictionary[StringName, int] = {}
+	while(node_index >= 0 or outline_instance):
+		if outline_instance:
+			# Return to previous node.
+			node_index += 1
+
+		var node:= root_node.children[node_index] as TextureNodeShape
+
+		if not node.fill_enabled and not node.outline_enabled:
+			node_index -= 1
+			node = root_node.children[node_index]
+
+		node._set_parameter(param_name, param, instance_index, outline_instance, slice_accums)
+
+		if not outline_instance:
+			if node.fill_enabled and node.outline_enabled:
+				outline_instance = true
+		else:
+			outline_instance = false
+
+		node_index -= 1
+		instance_index += 1
+
+	var typed_param = ShapeMaterialParameters.convert_parameter_array(param_name, param)
+	RenderingServer.material_set_param(material, param_name, typed_param)
+
+	return instance_index
 
 
 func _notification(what: int) -> void:
@@ -165,57 +220,3 @@ func _draw_rect_region(to_ci: RID, rect: Rect2, src_rect: Rect2,
 		modulate: Color, transpose: bool, clip_uv: bool) -> void:
 	RenderingServer.canvas_item_add_texture_rect_region(
 		to_ci, rect, texture, src_rect, modulate, transpose, clip_uv)
-
-
-func _set_material_parameter(param_name: StringName) -> int:
-	var param:= PackedByteArray()
-	var param_size:= ShapeMaterialParameters.material_parameter_size_in_bytes_map[param_name]
-	param.resize(param_size * MAX_SHAPE_COUNT)
-
-	# Loop over the nodes in reverse order so that the instances are in sequential draw order.
-	var node_index:= root_node.children.size() - 1
-	var instance_index:= 0
-	# If a node has both a fill and outline, they are split in 2 instances.
-	var outline_instance:= false
-	# Gradient and shape data are passed as slices.
-	var slice_accums: Dictionary[StringName, int] = {}
-	while(node_index >= 0 or outline_instance):
-		if outline_instance:
-			# Return to previous node.
-			node_index += 1
-
-		var node:= root_node.children[node_index] as TextureNodeShape
-
-		if not node.fill_enabled and not node.outline_enabled:
-			node_index -= 1
-			node = root_node.children[node_index]
-
-		node._set_parameter(param_name, param, instance_index, outline_instance, slice_accums)
-
-		if not outline_instance:
-			if node.fill_enabled and node.outline_enabled:
-				outline_instance = true
-		else:
-			outline_instance = false
-
-		node_index -= 1
-		instance_index += 1
-
-	var typed_param = ShapeMaterialParameters.convert_parameter_array(param_name, param)
-	RenderingServer.material_set_param(material, param_name, typed_param)
-
-	return instance_index
-
-
-func set_all_material_parameters() -> void:
-	set_instance_material_parameters()
-	for param_name in ShapeMaterialParameters.array_parameter_names:
-		_set_material_parameter(param_name)
-
-
-func set_instance_material_parameters() -> void:
-	var instance_count:= 0
-	for param_name in ShapeMaterialParameters.instance_parameter_names:
-		instance_count = _set_material_parameter(param_name)
-
-	RenderingServer.material_set_param(material, "shape_count", instance_count)

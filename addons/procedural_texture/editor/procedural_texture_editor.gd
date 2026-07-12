@@ -63,7 +63,6 @@ func _on_add_button_pressed() -> void:
 	texture.root_node.children.append(new_node)
 	new_node.root_texture_size = Vector2(texture.width, texture.height)
 	new_node.material_parameters_changed.connect(texture._on_node_material_parameter_changed)
-	texture.set_all_material_parameters()
 	texture.update()
 	var item = tree.create_item()
 	item.set_text(0, new_node._get_name())
@@ -84,7 +83,6 @@ func _on_remove_button_pressed() -> void:
 		return
 
 	texture.root_node.children.remove_at(selected.get_index())
-	texture.set_all_material_parameters()
 	texture.update()
 	EditorInterface.edit_resource(texture)
 	EditorInterface.set_object_edited(texture, true)
@@ -143,5 +141,4 @@ func _tree_drop_data(at_position: Vector2, data: Variant) -> void:
 func _move_node(node: TextureNode, to_index: int) -> void:
 	texture.root_node.children.erase(node)
 	texture.root_node.children.insert(to_index, node)
-	texture.set_all_material_parameters()
 	texture.update()
