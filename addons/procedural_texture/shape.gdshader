@@ -19,7 +19,7 @@ const int MODE_GRADIENT_2D = 4;
 const int MODE_OUTLINE_SOLID_COLOR = 5;
 
 const int AVG_STOPS = 4;
-const int AVG_SHAPE_DATA = 16;
+const int AVG_SHAPE_DATA = 8;
 const float EDGE_OFFSET = 0.01;
 
 uniform int shape_count;

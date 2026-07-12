@@ -3,7 +3,7 @@ class_name ShapeMaterialParameters
 extends RefCounted
 
 const AVG_GRADIENT_STOPS = 4
-const AVG_SHAPE_DATA = 16
+const AVG_SHAPE_DATA = 8
 
 
 static var instance_parameter_names: Array[StringName] = [
