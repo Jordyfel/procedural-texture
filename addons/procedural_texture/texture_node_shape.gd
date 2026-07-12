@@ -25,7 +25,7 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 
 
 @export_group("Fill", "fill")
-@export_custom(PROPERTY_HINT_GROUP_ENABLE,"") var fill_enabled:= false:
+@export_custom(PROPERTY_HINT_GROUP_ENABLE,"") var fill_enabled:= true:
 	set(value):
 		fill_enabled = value
 		material_parameters_changed.emit([&"instance"])
@@ -64,13 +64,21 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 
 
 static func create(shape: Shape) -> TextureNodeShape:
+	var new_shape: TextureNodeShape
 	match shape:
 		Shape.CIRCLE:
-			return CircleShape.new()
+			new_shape = CircleShape.new()
 		Shape.RECTANGLE:
-			return RectShape.new()
+			new_shape = RectShape.new()
 		_:
-			return CircleShape.new()
+			new_shape = CircleShape.new()
+
+	assert(
+		new_shape.fill_enabled or new_shape.outline_enabled,
+		"Newly created shapes being disabled breaks assumptions in shader data update logic."
+	)
+
+	return new_shape
 
 
 func _set_parameter(
