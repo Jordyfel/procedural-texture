@@ -23,7 +23,7 @@ extends Texture2D
 @export_storage var root_node: TextureNode
 @export_storage var shader: Shader
 
-const MAX_SHAPE_COUNT = 16
+const MAX_INSTANCE_COUNT = 16
 
 var initialized:= false
 
@@ -85,11 +85,15 @@ func _notification(what: int) -> void:
 
 func add_shape(shape: TextureNodeShape.Shape) -> String:
 	var new_node:= TextureNodeShape.create(shape)
-	root_node.children.append(new_node)
+	if (instance_count + new_node.instance_count >= MAX_INSTANCE_COUNT):
+		push_error("Maximum instance count of " + str(MAX_INSTANCE_COUNT) + " exceeded.")
+		return ""
+
 	new_node.root_texture_size = Vector2(width, height)
 	new_node.instance_count_changed.connect(_on_node_instance_count_changed)
 	new_node.material_parameters_changed.connect(_on_node_material_parameter_changed)
 	instance_count += new_node.instance_count
+	root_node.children.append(new_node)
 	update()
 	return new_node._get_name()
 

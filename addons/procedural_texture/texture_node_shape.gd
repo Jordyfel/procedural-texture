@@ -14,6 +14,12 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 			return
 
 		var change:= (value as int) - (outline_enabled as int)
+
+		const MAX_COUNT:= ProceduralTexture.MAX_INSTANCE_COUNT
+		if (instance_count + change >= MAX_COUNT):
+			push_error("Maximum instance count of " + str(MAX_COUNT) + " exceeded.")
+			return
+
 		outline_enabled = value
 		instance_count += change
 		instance_count_changed.emit(change)
@@ -36,6 +42,12 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 			return
 
 		var change:= (value as int) - (fill_enabled as int)
+
+		const MAX_COUNT:= ProceduralTexture.MAX_INSTANCE_COUNT
+		if (instance_count + change >= MAX_COUNT):
+			push_error("Maximum instance count of " + str(MAX_COUNT) + " exceeded.")
+			return
+
 		fill_enabled = value
 		instance_count += change
 		instance_count_changed.emit(change)
