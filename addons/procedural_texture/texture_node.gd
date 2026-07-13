@@ -26,7 +26,7 @@ func _set_parameter(
 	param_name: StringName,
 	param: PackedByteArray,
 	instance_index: int,
-	_outline_instance: bool,
+	_second_instance: bool,
 	_slice_accums: Dictionary[StringName, int]
 ) -> void:
 	match param_name:

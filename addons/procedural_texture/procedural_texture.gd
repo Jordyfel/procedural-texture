@@ -188,11 +188,11 @@ func _set_material_parameter(param_name: StringName) -> void:
 	var node_index:= root_node.children.size() - 1
 	var instance_index:= 0
 	# If a node has both a fill and outline, they are split in 2 instances.
-	var outline_instance:= false
+	var second_instance:= false
 	# Gradient and shape data are passed as slices.
 	var slice_accums: Dictionary[StringName, int] = {}
-	while(node_index >= 0 or outline_instance):
-		if outline_instance:
+	while(node_index >= 0 or second_instance):
+		if second_instance:
 			# Return to previous node.
 			node_index += 1
 
@@ -202,13 +202,13 @@ func _set_material_parameter(param_name: StringName) -> void:
 			node_index -= 1
 			node = root_node.children[node_index]
 
-		node._set_parameter(param_name, param, instance_index, outline_instance, slice_accums)
+		node._set_parameter(param_name, param, instance_index, second_instance, slice_accums)
 
-		if not outline_instance:
+		if not second_instance:
 			if node.fill_enabled and node.outline_enabled:
-				outline_instance = true
+				second_instance = true
 		else:
-			outline_instance = false
+			second_instance = false
 
 		node_index -= 1
 		instance_index += 1

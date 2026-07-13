@@ -12,15 +12,15 @@ func _set_parameter(
 	param_name: StringName,
 	param: PackedByteArray,
 	instance_index: int,
-	outline_instance: bool,
+	second_instance: bool,
 	slice_accums: Dictionary[StringName, int]
 ) -> void:
-	super(param_name, param, instance_index, outline_instance, slice_accums)
+	super(param_name, param, instance_index, second_instance, slice_accums)
 	match param_name:
 
 
 		&"shape_data":
-			if outline_instance:
+			if second_instance:
 				return
 
 			var data_start: int = slice_accums.get_or_add(&"shape_data_count", 0)

@@ -112,10 +112,10 @@ func _set_parameter(
 	param_name: StringName,
 	param: PackedByteArray,
 	instance_index: int,
-	outline_instance: bool,
+	second_instance: bool,
 	slice_accums: Dictionary[StringName, int]
 ) -> void:
-	super(param_name, param, instance_index, outline_instance, slice_accums)
+	super(param_name, param, instance_index, second_instance, slice_accums)
 	match param_name:
 		&"shape":
 			var shape:= _get_shape() as int
@@ -123,7 +123,7 @@ func _set_parameter(
 
 		&"shape_rect":
 			var side_length:= _get_side_length() as float
-			if fill_enabled and outline_enabled and not outline_instance:
+			if fill_enabled and outline_enabled and not second_instance:
 				# If there will be an outline over this fill, reduce size.
 				var mult:= 1 - (outline_width / side_length / 2)
 				side_length *= mult
@@ -138,8 +138,8 @@ func _set_parameter(
 			param.encode_float(instance_index * 16 + 12, rect.size.y)
 
 		&"shape_draw_mode":
-			var is_outline:= not fill_enabled or outline_instance
-			var draw_mode:= 5 if is_outline else fill_mode # TODO: Rework outline mode data.
+			# TODO: Rework outline mode data.
+			var draw_mode:= 5 if not fill_enabled or second_instance else fill_mode
 			param.encode_s32(instance_index * 4, draw_mode)
 
 		&"shape_outline_width":
@@ -147,8 +147,7 @@ func _set_parameter(
 			param.encode_float(instance_index * 4, width)
 
 		&"shape_color":
-			var is_outline:= not fill_enabled or outline_instance
-			var color := outline_color if is_outline else fill_color
+			var color := outline_color if not fill_enabled or second_instance else fill_color
 			color = Oklab.linear_to_oklab(color.srgb_to_linear())
 			param.encode_float(instance_index * 16 + 0, color.r)
 			param.encode_float(instance_index * 16 + 4, color.g)
@@ -175,7 +174,7 @@ func _set_parameter(
 		&"shape_data_start":
 			var data_count:= _get_shape_data_float_count()
 			# If outline instance, record a slice to previous instances data.
-			var offset:= 0 if not outline_instance else -data_count
+			var offset:= 0 if not second_instance else -data_count
 			var data_start: int = slice_accums.get_or_add(&"shape_data_count", 0)
 			param.encode_s32(instance_index * 4, data_start + offset)
 			slice_accums[&"shape_data_count"] = data_start + offset + data_count
@@ -187,7 +186,7 @@ func _set_parameter(
 		&"gradient_first_stop":
 			var stop_count:= gradient.stops.size()
 			# If outline instance, record a slice to previous instances data.
-			var offset:= 0 if not outline_instance else -stop_count
+			var offset:= 0 if not second_instance else -stop_count
 			var first_stop: int = slice_accums.get_or_add(&"stop_count", 0)
 			param.encode_s32(instance_index * 4, first_stop + offset)
 			slice_accums[&"stop_count"] = first_stop + offset + gradient.stops.size()
@@ -197,7 +196,7 @@ func _set_parameter(
 			param.encode_s32(instance_index * 4, stop_count)
 
 		&"gradient_colors":
-			if outline_instance:
+			if second_instance:
 				return
 
 			var first_stop: int = slice_accums.get_or_add(&"stop_count", 0)
@@ -208,7 +207,7 @@ func _set_parameter(
 			slice_accums[&"stop_count"] = first_stop + colors.size() / 4
 
 		&"gradient_stops":
-			if outline_instance:
+			if second_instance:
 				return
 
 			var first_stop: int = slice_accums.get_or_add(&"stop_count", 0)
@@ -218,7 +217,7 @@ func _set_parameter(
 			slice_accums[&"stop_count"] = first_stop + stops.size()
 
 		&"gradient_stop_origins":
-			if outline_instance:
+			if second_instance:
 				return
 
 			var first_stop: int = slice_accums.get_or_add(&"stop_count", 0)
