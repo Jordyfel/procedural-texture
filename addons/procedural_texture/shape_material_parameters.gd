@@ -18,7 +18,7 @@ static var instance_parameter_names: Array[StringName] = [
 	&"shape_smoothing",
 	&"gradient_first_stop",
 	&"gradient_stop_count",
-	&"gradient_transform_data",
+	&"draw_mode_data",
 ]
 
 static var array_parameter_names: Array[StringName] = [
@@ -44,7 +44,7 @@ static var material_parameter_size_in_bytes_map: Dictionary[StringName, int] = {
 	&"gradient_colors":         16 * AVG_GRADIENT_STOPS,
 	&"gradient_stops":          4 * AVG_GRADIENT_STOPS,
 	&"gradient_stop_origins":   8 * AVG_GRADIENT_STOPS,
-	&"gradient_transform_data": 12,
+	&"draw_mode_data": 12,
 }
 
 
@@ -65,5 +65,5 @@ static func convert_parameter_array(param_name: StringName, array: PackedByteArr
 		&"gradient_colors":         return array.to_vector4_array()
 		&"gradient_stops":          return array.to_float32_array()
 		&"gradient_stop_origins":   return array.to_vector2_array()
-		&"gradient_transform_data": return array.to_vector3_array()
+		&"draw_mode_data": return array.to_vector3_array()
 	return null

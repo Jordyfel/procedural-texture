@@ -33,7 +33,7 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 @export var fill_mode:= FillMode.SOLID_COLOR:
 	set(value):
 		fill_mode = value
-		material_parameters_changed.emit([&"shape_draw_mode", &"gradient_transform_data"])
+		material_parameters_changed.emit([&"shape_draw_mode", &"draw_mode_data"])
 
 @export var fill_color:= Color.WHITE:
 	set(value):
@@ -50,17 +50,17 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 @export_range(0, 360, 0.001, "radians_as_degrees") var linear_gradient_rotation:= 0.0:
 	set(value):
 		linear_gradient_rotation = value
-		material_parameters_changed.emit([&"gradient_transform_data"])
+		material_parameters_changed.emit([&"draw_mode_data"])
 
 @export var radial_gradient_origin:= Vector2(0.5, 0.5):
 	set(value):
 		radial_gradient_origin = value
-		material_parameters_changed.emit([&"gradient_transform_data"])
+		material_parameters_changed.emit([&"draw_mode_data"])
 
 @export_range(0, 1.0, 0.001, "or_greater", "prefer_slider") var radial_gradient_radius:= 0.5:
 	set(value):
 		radial_gradient_radius = value
-		material_parameters_changed.emit([&"gradient_transform_data"])
+		material_parameters_changed.emit([&"draw_mode_data"])
 
 
 static func create(shape: Shape) -> TextureNodeShape:
@@ -174,19 +174,19 @@ func _set_parameter(
 			@warning_ignore("integer_division")
 			slice_accums[&"stop_count"] = first_stop + stop_origins.size() / 2
 
-		&"gradient_transform_data":
-			var gradient_transform_data:= Vector3()
+		&"draw_mode_data":
+			var draw_mode_data:= Vector3()
 			match fill_mode:
 				FillMode.LINEAR_GRADIENT:
-					gradient_transform_data.x = linear_gradient_rotation
+					draw_mode_data.x = linear_gradient_rotation
 				FillMode.RADIAL_GRADIENT:
-					gradient_transform_data.x = radial_gradient_origin.x
-					gradient_transform_data.y = radial_gradient_origin.y
-					gradient_transform_data.z = radial_gradient_radius
+					draw_mode_data.x = radial_gradient_origin.x
+					draw_mode_data.y = radial_gradient_origin.y
+					draw_mode_data.z = radial_gradient_radius
 
-			param.encode_float(instance_index * 12 + 0, gradient_transform_data.x)
-			param.encode_float(instance_index * 12 + 4, gradient_transform_data.y)
-			param.encode_float(instance_index * 12 + 8, gradient_transform_data.z)
+			param.encode_float(instance_index * 12 + 0, draw_mode_data.x)
+			param.encode_float(instance_index * 12 + 4, draw_mode_data.y)
+			param.encode_float(instance_index * 12 + 8, draw_mode_data.z)
 
 
 func _get_shape() -> Shape:
