@@ -17,16 +17,7 @@ func _set_parameter(
 ) -> void:
 	super(param_name, param, instance_index, outline_instance, slice_accums)
 	match param_name:
-		&"shape_data_start":
-			# If outline instance, record a slice to previous instances data.
-			var offset:= 0 if not outline_instance else -2
-			var data_start: int = slice_accums.get_or_add(&"shape_data_count", 0)
-			param.encode_s32(instance_index * 4, data_start + offset)
-			slice_accums[&"shape_data_count"] = data_start + offset + 2
 
-		&"shape_data_count":
-			var data_count:= 2
-			param.encode_s32(instance_index * 4, data_count)
 
 		&"shape_data":
 			if outline_instance:
@@ -49,3 +40,7 @@ func _get_name() -> String:
 
 func _get_side_length() -> int:
 	return ceil(max(rect.x, rect.y))
+
+
+func _get_shape_data_float_count() -> int:
+	return 2

@@ -145,6 +145,18 @@ func _set_parameter(
 			param.encode_float(instance_index * 12 + 4, draw_mode_data.y)
 			param.encode_float(instance_index * 12 + 8, draw_mode_data.z)
 
+		&"shape_data_start":
+			var data_count:= _get_shape_data_float_count()
+			# If outline instance, record a slice to previous instances data.
+			var offset:= 0 if not outline_instance else -data_count
+			var data_start: int = slice_accums.get_or_add(&"shape_data_count", 0)
+			param.encode_s32(instance_index * 4, data_start + offset)
+			slice_accums[&"shape_data_count"] = data_start + offset + data_count
+
+		&"shape_data_count":
+			var data_count:= _get_shape_data_float_count()
+			param.encode_s32(instance_index * 4, data_count)
+
 		&"gradient_first_stop":
 			var stop_count:= gradient.stops.size()
 			# If outline instance, record a slice to previous instances data.
@@ -192,3 +204,7 @@ func _set_parameter(
 
 func _get_shape() -> Shape:
 	return Shape.CIRCLE
+
+
+func _get_shape_data_float_count() -> int:
+	return 0
