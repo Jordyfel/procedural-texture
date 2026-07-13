@@ -42,12 +42,12 @@ func _init() -> void:
 
 func setup() -> void:
 	root_node = TextureNode.new()
+	shader = load("uid://cki66x75vn1uk")
 	_initialize()
 
 
 func _initialize() -> void:
 	initialized = true
-	shader = load("res://addons/procedural_texture/shape.gdshader")
 	RenderingServer.material_set_shader(material, shader.get_rid())
 	var bg:= Oklab.linear_to_oklab(background_color.srgb_to_linear())
 	texture = RenderingServer.texture_drawable_create(

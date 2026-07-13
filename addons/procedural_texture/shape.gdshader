@@ -1,8 +1,8 @@
 shader_type texture_blit;
 render_mode blend_disabled;
 
-#include "res://addons/procedural_texture/color/oklab.gdshaderinc"
-#include "res://addons/procedural_texture/sdf_shapes.gdshaderinc"
+#include "color/oklab.gdshaderinc"
+#include "sdf_shapes.gdshaderinc"
 
 const int MAX_SHAPE_COUNT = 16;
 
