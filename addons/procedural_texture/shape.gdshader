@@ -135,6 +135,18 @@ vec4 make_fill_color(vec2 uv, int index, float gradient, float offset) {
 	return color;
 }
 
+float get_shape_signed_distance(vec2 uv, int index) {
+	vec2 p = uv -  vec2(0.5);
+	switch (shape[index]) {
+		case SHAPE_CIRCLE:
+			return sdCircle(p, 0.5);
+		case SHAPE_RECTANGLE:
+			int rect_data_start = shape_data_start[index];
+			vec2 b = vec2(shape_data[rect_data_start], shape_data[rect_data_start + 1]);
+			return sdBox(p, b);
+	}
+}
+
 vec4 draw_shape(vec2 uv, int index) {
 	vec4 rect = shape_rect[index];
 
@@ -149,25 +161,14 @@ vec4 draw_shape(vec2 uv, int index) {
 		return vec4(0.0);
 	}
 
-	float sd;
-	switch (shape[index]) {
-		case SHAPE_CIRCLE:
-			sd = sdCircle(uv - vec2(0.5), 0.5);
-			break;
-		case SHAPE_RECTANGLE:
-			int rect_data_start = shape_data_start[index];
-			vec2 b = vec2(shape_data[rect_data_start], shape_data[rect_data_start + 1]);
-			sd = sdBox(uv - vec2(0.5), b);
-			break;
-	}
-
-	vec4 color;
-
-	// Get a gradient from the signed distance.
-	float gradient = -sd * 2.0;
-	if (gradient < 0.0) {
+	float sd = get_shape_signed_distance(uv, index);
+	if (sd > 0.0) {
 		return vec4(0.0);
 	}
+
+	float gradient = -sd * 2.0;
+
+	vec4 color;
 
 	if (shape_draw_mode[index] == MODE_OUTLINE_SOLID_COLOR) {
 		color = shape_color[index];
