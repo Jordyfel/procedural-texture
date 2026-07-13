@@ -1,3 +1,5 @@
+// https://bottosson.github.io/posts/oklab/
+
 const mat3 RGB_TO_LMS = mat3(
 	vec3(+0.4122214708, +0.2119034982, +0.0883024619),
 	vec3(+0.5363325363, +0.6806995451, +0.2817188376),

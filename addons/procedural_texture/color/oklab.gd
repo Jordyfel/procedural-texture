@@ -2,6 +2,8 @@
 class_name Oklab
 extends RefCounted
 
+# https://bottosson.github.io/posts/oklab/
+
 
 static func oklab_to_oklch(oklab: Color) -> Color:
 	return Color(

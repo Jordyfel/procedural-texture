@@ -1,3 +1,5 @@
+// https://bottosson.github.io/posts/oklab/
+
 vec3 oklab_to_oklch(vec3 color) {
 	float l = color.x;
 	float c = sqrt(color.y * color.y + color.z * color.z);
