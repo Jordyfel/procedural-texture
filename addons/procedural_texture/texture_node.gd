@@ -17,7 +17,7 @@ signal material_parameters_changed(param_names: Array)
 
 @export_storage var children: Array[TextureNode]
 
-var root_texture_size: Vector2
+var texture_size: Vector2
 
 var instance_count:= 0
 

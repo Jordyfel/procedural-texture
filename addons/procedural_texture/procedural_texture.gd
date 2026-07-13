@@ -60,7 +60,7 @@ func _initialize() -> void:
 	)
 
 	for node in root_node.children:
-		node.root_texture_size = Vector2(width, height)
+		node.texture_size = Vector2(width, height)
 		node.instance_count_changed.connect(_on_node_instance_count_changed)
 		node.material_parameters_changed.connect(_on_node_material_parameter_changed)
 		instance_count += node.instance_count
@@ -89,7 +89,7 @@ func add_shape(shape: TextureNodeShape.Shape) -> String:
 		push_error("Maximum instance count of " + str(MAX_INSTANCE_COUNT) + " exceeded.")
 		return ""
 
-	new_node.root_texture_size = Vector2(width, height)
+	new_node.texture_size = Vector2(width, height)
 	new_node.instance_count_changed.connect(_on_node_instance_count_changed)
 	new_node.material_parameters_changed.connect(_on_node_material_parameter_changed)
 	instance_count += new_node.instance_count
@@ -137,7 +137,7 @@ func _on_size_changed() -> void:
 		return
 
 	for node in root_node.children:
-		node.root_texture_size = Vector2(width, height)
+		node.texture_size = Vector2(width, height)
 
 	var bg:= Oklab.linear_to_oklab(background_color.srgb_to_linear())
 	var new_texture:= RenderingServer.texture_drawable_create(

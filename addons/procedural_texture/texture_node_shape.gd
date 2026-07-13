@@ -130,7 +130,7 @@ func _set_parameter(
 
 			var size:= Vector2(side_length, side_length)
 			var rect:= Rect2(Vector2(position) - size / 2, size)
-			rect = Rect2(rect.position / root_texture_size, rect.size / root_texture_size)
+			rect = Rect2(rect.position / texture_size, rect.size / texture_size)
 
 			param.encode_float(instance_index * 16 + 0, rect.position.x)
 			param.encode_float(instance_index * 16 + 4, rect.position.y)
