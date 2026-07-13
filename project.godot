@@ -20,6 +20,7 @@ gdscript/warnings/directory_rules={
 "res://addons": 0,
 "res://addons/procedural_texture/": 1
 }
+gdscript/warnings/unused_signal=0
 shader_language/warnings/unused_constant=false
 shader_language/warnings/unused_function=false
 
