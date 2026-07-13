@@ -59,13 +59,9 @@ func _on_texture_rect_mouse_exited() -> void:
 
 
 func _on_add_button_pressed() -> void:
-	var new_node:= TextureNodeShape.create(shape_option_button.selected)
-	texture.root_node.children.append(new_node)
-	new_node.root_texture_size = Vector2(texture.width, texture.height)
-	new_node.material_parameters_changed.connect(texture._on_node_material_parameter_changed)
-	texture.update()
+	var new_node_name:= texture.add_shape(shape_option_button.selected)
 	var item = tree.create_item()
-	item.set_text(0, new_node._get_name())
+	item.set_text(0, new_node_name)
 
 
 func _on_tree_item_selected() -> void:
@@ -82,8 +78,7 @@ func _on_remove_button_pressed() -> void:
 	if selected.get_parent() == null:
 		return
 
-	texture.root_node.children.remove_at(selected.get_index())
-	texture.update()
+	texture.remove_node(selected.get_index())
 	EditorInterface.edit_resource(texture)
 	EditorInterface.set_object_edited(texture, true)
 	selected.free()
@@ -127,18 +122,12 @@ func _tree_drop_data(at_position: Vector2, data: Variant) -> void:
 			return
 		-1:
 			tree.get_root().get_child(index).move_before(item)
-			_move_node(node, item.get_index() - 1)
+			texture.move_node(node, item.get_index() - 1)
 		0:
 			pass # TODO: Last child.
 		1:
 
 			tree.get_root().get_child(index).move_after(item)
-			_move_node(node, item.get_index() + 1)
+			texture.move_node(node, item.get_index() + 1)
 		2:
 			pass # TODO: First child.
-
-
-func _move_node(node: TextureNode, to_index: int) -> void:
-	texture.root_node.children.erase(node)
-	texture.root_node.children.insert(to_index, node)
-	texture.update()

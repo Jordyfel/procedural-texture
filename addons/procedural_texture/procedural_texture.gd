@@ -79,6 +79,26 @@ func _notification(what: int) -> void:
 			RenderingServer.free_rid(texture)
 
 
+func add_shape(shape: TextureNodeShape.Shape) -> String:
+	var new_node:= TextureNodeShape.create(shape)
+	root_node.children.append(new_node)
+	new_node.root_texture_size = Vector2(width, height)
+	new_node.material_parameters_changed.connect(_on_node_material_parameter_changed)
+	update()
+	return new_node._get_name()
+
+
+func remove_node(index: int) -> void:
+	root_node.children.remove_at(index)
+	update()
+
+
+func move_node(node: TextureNode, to_index: int) -> void:
+	root_node.children.erase(node)
+	root_node.children.insert(to_index, node)
+	update()
+
+
 func update() -> void:
 	_set_instance_material_parameters()
 	for param_name in ShapeMaterialParameters.array_parameter_names:
