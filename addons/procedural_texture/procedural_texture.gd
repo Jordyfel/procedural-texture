@@ -23,7 +23,7 @@ extends Texture2D
 @export_storage var root_node: TextureNode
 @export_storage var shader: Shader
 
-const MAX_INSTANCE_COUNT = 16
+const MAX_INSTANCE_COUNT = 64
 
 var initialized:= false
 

@@ -4,7 +4,7 @@ render_mode blend_disabled;
 #include "color/oklab.gdshaderinc"
 #include "sdf_shapes.gdshaderinc"
 
-const int MAX_INSTANCE_COUNT = 16;
+const int MAX_INSTANCE_COUNT = 64;
 const int AVG_SHAPE_DATA = 8;
 const int AVG_STOPS = 4;
 
