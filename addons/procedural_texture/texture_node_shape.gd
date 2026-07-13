@@ -10,8 +10,13 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 @export_group("Outline", "outline")
 @export_custom(PROPERTY_HINT_GROUP_ENABLE,"") var outline_enabled:= false:
 	set(value):
+		if value == outline_enabled:
+			return
+
+		var change:= (value as int) - (outline_enabled as int)
 		outline_enabled = value
-		material_parameters_changed.emit([&"instance"])
+		instance_count += change
+		instance_count_changed.emit(change)
 
 @export_range(0, 20, 0.01, "or_greater", "prefer_slider") var outline_width:= 2.0:
 	set(value):
@@ -27,8 +32,13 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 @export_group("Fill", "fill")
 @export_custom(PROPERTY_HINT_GROUP_ENABLE,"") var fill_enabled:= true:
 	set(value):
+		if value == fill_enabled:
+			return
+
+		var change:= (value as int) - (fill_enabled as int)
 		fill_enabled = value
-		material_parameters_changed.emit([&"instance"])
+		instance_count += change
+		instance_count_changed.emit(change)
 
 @export var fill_mode:= FillMode.SOLID_COLOR:
 	set(value):
@@ -63,6 +73,10 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 		material_parameters_changed.emit([&"draw_mode_data"])
 
 
+func _init() -> void:
+	instance_count = (fill_enabled as int) + (outline_enabled as int)
+
+
 static func create(shape: Shape) -> TextureNodeShape:
 	var new_shape: TextureNodeShape
 	match shape:
@@ -73,8 +87,9 @@ static func create(shape: Shape) -> TextureNodeShape:
 		_:
 			new_shape = CircleShape.new()
 
+	new_shape.instance_count = (new_shape.fill_enabled as int) + (new_shape.outline_enabled as int)
 	assert(
-		new_shape.fill_enabled or new_shape.outline_enabled,
+		new_shape.instance_count > 0,
 		"Newly created shapes being disabled breaks assumptions in shader data update logic."
 	)
 

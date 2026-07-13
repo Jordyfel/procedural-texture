@@ -2,6 +2,7 @@
 class_name TextureNode
 extends Resource
 
+signal instance_count_changed(change: int)
 signal material_parameters_changed(param_names: Array)
 
 @export var position: Vector2:
@@ -17,6 +18,8 @@ signal material_parameters_changed(param_names: Array)
 @export_storage var children: Array[TextureNode]
 
 var root_texture_size: Vector2
+
+var instance_count:= 0
 
 
 func _set_parameter(

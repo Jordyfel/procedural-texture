@@ -31,6 +31,8 @@ var texture: RID
 var material: RID
 var dummy_source: RID
 
+var instance_count:= 0
+
 
 func _init() -> void:
 	var image:= Image.create_empty(2, 2, false, Image.Format.FORMAT_RGBA8)
@@ -59,7 +61,9 @@ func _initialize() -> void:
 
 	for node in root_node.children:
 		node.root_texture_size = Vector2(width, height)
+		node.instance_count_changed.connect(_on_node_instance_count_changed)
 		node.material_parameters_changed.connect(_on_node_material_parameter_changed)
+		instance_count += node.instance_count
 
 	update()
 
@@ -83,12 +87,15 @@ func add_shape(shape: TextureNodeShape.Shape) -> String:
 	var new_node:= TextureNodeShape.create(shape)
 	root_node.children.append(new_node)
 	new_node.root_texture_size = Vector2(width, height)
+	new_node.instance_count_changed.connect(_on_node_instance_count_changed)
 	new_node.material_parameters_changed.connect(_on_node_material_parameter_changed)
+	instance_count += new_node.instance_count
 	update()
 	return new_node._get_name()
 
 
 func remove_node(index: int) -> void:
+	instance_count -= root_node.children[index].instance_count
 	root_node.children.remove_at(index)
 	update()
 
@@ -146,26 +153,32 @@ func _on_node_material_parameter_changed(param_names: Array) -> void:
 		return
 
 	for param_name: StringName in param_names:
-		if param_name == &"instance":
-			_set_instance_material_parameters()
-		else:
-			_set_material_parameter(param_name)
+		_set_material_parameter(param_name)
+
+	_redraw()
+
+
+func _on_node_instance_count_changed(change: int) -> void:
+	if not initialized:
+		return
+
+	instance_count += change
+	_set_instance_material_parameters()
 
 	_redraw()
 
 
 func _set_instance_material_parameters() -> void:
-	var instance_count:= 0
-	for param_name in ShapeMaterialParameters.instance_parameter_names:
-		instance_count = _set_material_parameter(param_name)
-
 	RenderingServer.material_set_param(material, "shape_count", instance_count)
 
+	for param_name in ShapeMaterialParameters.instance_parameter_names:
+		_set_material_parameter(param_name)
 
-func _set_material_parameter(param_name: StringName) -> int:
+
+func _set_material_parameter(param_name: StringName) -> void:
 	var param:= PackedByteArray()
 	var param_size:= ShapeMaterialParameters.material_parameter_size_in_bytes_map[param_name]
-	param.resize(param_size * MAX_SHAPE_COUNT)
+	param.resize(param_size * instance_count)
 
 	# Loop over the nodes in reverse order so that the instances are in sequential draw order.
 	var node_index:= root_node.children.size() - 1
@@ -198,8 +211,6 @@ func _set_material_parameter(param_name: StringName) -> int:
 
 	var typed_param = ShapeMaterialParameters.convert_parameter_array(param_name, param)
 	RenderingServer.material_set_param(material, param_name, typed_param)
-
-	return instance_index
 
 
 func _reset_state() -> void:
