@@ -31,6 +31,7 @@ uniform int shape_draw_mode[MAX_SHAPE_COUNT];               // Draw data.
 uniform float shape_outline_width[MAX_SHAPE_COUNT];
 uniform vec4 shape_color[MAX_SHAPE_COUNT];
 uniform float shape_smoothing[MAX_SHAPE_COUNT];
+uniform float shape_rounding[MAX_SHAPE_COUNT];
 
 // float linear_gradient_rotation
 // OR
@@ -136,15 +137,25 @@ vec4 make_fill_color(vec2 uv, int index, float gradient, float offset) {
 }
 
 float get_shape_signed_distance(vec2 uv, int index) {
-	vec2 p = uv -  vec2(0.5);
+	vec2 p = uv - vec2(0.5);
+	float scale = 1.0 + shape_rounding[index] * 2.0;
+	p *= vec2(scale);
+
+	float sd;
 	switch (shape[index]) {
 		case SHAPE_CIRCLE:
-			return sdCircle(p, 0.5);
+			sd = sdCircle(p, 0.5);
+			break;
 		case SHAPE_RECTANGLE:
 			int rect_data_start = shape_data_start[index];
 			vec2 b = vec2(shape_data[rect_data_start], shape_data[rect_data_start + 1]);
-			return sdBox(p, b);
+			sd = sdBox(p, b);
+			break;
 	}
+
+	sd -= shape_rounding[index];
+	sd /= scale;
+	return sd;
 }
 
 vec4 draw_shape(vec2 uv, int index) {

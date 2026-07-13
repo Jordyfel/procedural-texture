@@ -14,6 +14,7 @@ static var instance_parameter_names: Array[StringName] = [
 	&"shape_outline_width",
 	&"shape_color",
 	&"shape_smoothing",
+	&"shape_rounding",
 	&"draw_mode_data",
 	&"shape_data_start",
 	&"shape_data_count",
@@ -36,6 +37,7 @@ static var material_parameter_size_in_bytes_map: Dictionary[StringName, int] = {
 	&"shape_outline_width":     4,
 	&"shape_color":             16,
 	&"shape_smoothing":         4,
+	&"shape_rounding":          4,
 	&"draw_mode_data":          12,
 	&"shape_data_start":        4,
 	&"shape_data_count":        4,
@@ -57,6 +59,7 @@ static func convert_parameter_array(param_name: StringName, array: PackedByteArr
 		&"shape_outline_width":     return array.to_float32_array()
 		&"shape_color":             return array.to_vector4_array()
 		&"shape_smoothing":         return array.to_float32_array()
+		&"shape_rounding":          return array.to_float32_array()
 		&"draw_mode_data":          return array.to_vector3_array()
 		&"shape_data_start":        return array.to_int32_array()
 		&"shape_data_count":        return array.to_int32_array()

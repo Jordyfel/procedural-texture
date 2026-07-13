@@ -67,6 +67,11 @@ enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT,
 		smoothing = value
 		material_parameters_changed.emit([&"shape_smoothing"])
 
+@export_range(0, 100, 0.01, "or_greater", "prefer_slider") var rounding:= 0.0:
+	set(value):
+		rounding = value
+		material_parameters_changed.emit([&"shape_rounding"])
+
 @export var gradient:= OklabGradient.new()
 
 @export_range(0, 360, 0.001, "radians_as_degrees") var linear_gradient_rotation:= 0.0:
@@ -156,6 +161,9 @@ func _set_parameter(
 
 		&"shape_smoothing":
 			param.encode_float(instance_index * 4, smoothing / _get_side_length() as float)
+
+		&"shape_rounding":
+			param.encode_float(instance_index * 4, rounding / (_get_side_length() as float))
 
 		&"draw_mode_data":
 			var draw_mode_data:= Vector3()
