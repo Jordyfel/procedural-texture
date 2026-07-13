@@ -5,50 +5,48 @@ render_mode blend_disabled;
 #include "sdf_shapes.gdshaderinc"
 
 const int MAX_SHAPE_COUNT = 16;
+const int AVG_SHAPE_DATA = 8;
+const int AVG_STOPS = 4;
 
-// TextureNodeShape.Shape
-const int SHAPE_CIRCLE = 0;
+const int SHAPE_CIRCLE = 0;                                 // TextureNodeShape.Shape
 const int SHAPE_RECTANGLE = 1;
 
-// TextureNodeShape.FillMode
-const int MODE_SOLID_COLOR = 0;
+const int MODE_SOLID_COLOR = 0;                             // TextureNodeShape.FillMode
 const int MODE_DISTANCE_GRADIENT = 1;
 const int MODE_LINEAR_GRADIENT = 2;
 const int MODE_RADIAL_GRADIENT = 3;
 const int MODE_GRADIENT_2D = 4;
 const int MODE_OUTLINE_SOLID_COLOR = 5;
 
-const int AVG_STOPS = 4;
-const int AVG_SHAPE_DATA = 8;
 const float EDGE_OFFSET = 0.01;
 
 uniform int shape_count;
 
-uniform int shape[MAX_SHAPE_COUNT];
-uniform vec4 shape_rect[MAX_SHAPE_COUNT];
+uniform int shape[MAX_SHAPE_COUNT];                         // Type.
+
+uniform vec4 shape_rect[MAX_SHAPE_COUNT];                   // Transform.
 uniform float shape_rotation[MAX_SHAPE_COUNT];
 
-uniform int shape_data_start[MAX_SHAPE_COUNT];
-uniform int shape_data_count[MAX_SHAPE_COUNT];
-uniform float shape_data[MAX_SHAPE_COUNT * AVG_SHAPE_DATA];
-
-uniform int shape_draw_mode[MAX_SHAPE_COUNT];
+uniform int shape_draw_mode[MAX_SHAPE_COUNT];               // Draw data.
 uniform float shape_outline_width[MAX_SHAPE_COUNT];
 uniform vec4 shape_color[MAX_SHAPE_COUNT];
 uniform float shape_smoothing[MAX_SHAPE_COUNT];
-
-// Stops are interpreded as weights for 2D gradients.
-uniform int gradient_first_stop[MAX_SHAPE_COUNT];
-uniform int gradient_stop_count[MAX_SHAPE_COUNT];
-uniform vec4 gradient_colors[MAX_SHAPE_COUNT * AVG_STOPS];
-uniform float gradient_stops[MAX_SHAPE_COUNT * AVG_STOPS];
-uniform vec2 gradient_stop_origins[MAX_SHAPE_COUNT * AVG_STOPS];
 
 // float linear_gradient_rotation
 // OR
 // vec2 radial_gradient_origin
 // float radial_gradient_radius
 uniform vec3 draw_mode_data[MAX_SHAPE_COUNT];
+
+uniform int shape_data_start[MAX_SHAPE_COUNT];              // Shape data slice and global array.
+uniform int shape_data_count[MAX_SHAPE_COUNT];
+uniform float shape_data[MAX_SHAPE_COUNT * AVG_SHAPE_DATA];
+
+uniform int gradient_first_stop[MAX_SHAPE_COUNT];           // Gradients slice and global array.
+uniform int gradient_stop_count[MAX_SHAPE_COUNT];
+uniform vec4 gradient_colors[MAX_SHAPE_COUNT * AVG_STOPS];
+uniform float gradient_stops[MAX_SHAPE_COUNT * AVG_STOPS];  // Or weights for 2D gradients.
+uniform vec2 gradient_stop_origins[MAX_SHAPE_COUNT * AVG_STOPS];
 
 
 vec3 linear_to_srgb(vec3 color) {

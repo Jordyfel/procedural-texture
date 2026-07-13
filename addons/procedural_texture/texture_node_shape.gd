@@ -130,6 +130,20 @@ func _set_parameter(
 		&"shape_smoothing":
 			param.encode_float(instance_index * 4, smoothing / _get_width() as float)
 
+		&"draw_mode_data":
+			var draw_mode_data:= Vector3()
+			match fill_mode:
+				FillMode.LINEAR_GRADIENT:
+					draw_mode_data.x = linear_gradient_rotation
+				FillMode.RADIAL_GRADIENT:
+					draw_mode_data.x = radial_gradient_origin.x
+					draw_mode_data.y = radial_gradient_origin.y
+					draw_mode_data.z = radial_gradient_radius
+
+			param.encode_float(instance_index * 12 + 0, draw_mode_data.x)
+			param.encode_float(instance_index * 12 + 4, draw_mode_data.y)
+			param.encode_float(instance_index * 12 + 8, draw_mode_data.z)
+
 		&"gradient_first_stop":
 			var stop_count:= gradient.stops.size()
 			# If outline instance, record a slice to previous instances data.
@@ -173,20 +187,6 @@ func _set_parameter(
 				param.encode_float(first_stop * 8 + i * 4, stop_origins[i])
 			@warning_ignore("integer_division")
 			slice_accums[&"stop_count"] = first_stop + stop_origins.size() / 2
-
-		&"draw_mode_data":
-			var draw_mode_data:= Vector3()
-			match fill_mode:
-				FillMode.LINEAR_GRADIENT:
-					draw_mode_data.x = linear_gradient_rotation
-				FillMode.RADIAL_GRADIENT:
-					draw_mode_data.x = radial_gradient_origin.x
-					draw_mode_data.y = radial_gradient_origin.y
-					draw_mode_data.z = radial_gradient_radius
-
-			param.encode_float(instance_index * 12 + 0, draw_mode_data.x)
-			param.encode_float(instance_index * 12 + 4, draw_mode_data.y)
-			param.encode_float(instance_index * 12 + 8, draw_mode_data.z)
 
 
 func _get_shape() -> Shape:
