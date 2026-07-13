@@ -64,6 +64,21 @@ func _initialize() -> void:
 	update()
 
 
+func _notification(what: int) -> void:
+	match what:
+		NOTIFICATION_RESOURCE_DESERIALIZED:
+			if initialized:
+				return
+
+			_initialize()
+			RenderingServer.texture_set_path(texture, get_path())
+
+		NOTIFICATION_PREDELETE:
+			RenderingServer.free_rid(dummy_source)
+			RenderingServer.free_rid(material)
+			RenderingServer.free_rid(texture)
+
+
 func update() -> void:
 	_set_instance_material_parameters()
 	for param_name in ShapeMaterialParameters.array_parameter_names:
@@ -165,21 +180,6 @@ func _set_material_parameter(param_name: StringName) -> int:
 	RenderingServer.material_set_param(material, param_name, typed_param)
 
 	return instance_index
-
-
-func _notification(what: int) -> void:
-	match what:
-		NOTIFICATION_RESOURCE_DESERIALIZED:
-			if initialized:
-				return
-
-			_initialize()
-			RenderingServer.texture_set_path(texture, get_path())
-
-		NOTIFICATION_PREDELETE:
-			RenderingServer.free_rid(dummy_source)
-			RenderingServer.free_rid(material)
-			RenderingServer.free_rid(texture)
 
 
 func _reset_state() -> void:
