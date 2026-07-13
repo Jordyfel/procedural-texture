@@ -35,9 +35,5 @@ func _get_name() -> String:
 	return ""
 
 
-func _get_height() -> int:
-	return 256
-
-
-func _get_width() -> int:
+func _get_side_length() -> int:
 	return 256

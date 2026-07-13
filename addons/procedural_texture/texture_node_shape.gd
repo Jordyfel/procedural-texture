@@ -95,12 +95,13 @@ func _set_parameter(
 			param.encode_s32(instance_index * 4, shape)
 
 		&"shape_rect":
-			var size:= Vector2(_get_width(), _get_height())
+			var side_length:= _get_side_length() as float
 			if fill_enabled and outline_enabled and not outline_instance:
 				# If there will be an outline over this fill, reduce size.
-				var mult:= 1 - (outline_width / _get_width() as float / 2)
-				size *= Vector2(mult, mult)
+				var mult:= 1 - (outline_width / side_length / 2)
+				side_length *= mult
 
+			var size:= Vector2(side_length, side_length)
 			var rect:= Rect2(Vector2(position) - size / 2, size)
 			rect = Rect2(rect.position / root_texture_size, rect.size / root_texture_size)
 
@@ -115,7 +116,7 @@ func _set_parameter(
 			param.encode_s32(instance_index * 4, draw_mode)
 
 		&"shape_outline_width":
-			var width:= outline_width / _get_width() as float
+			var width:= outline_width / _get_side_length() as float
 			param.encode_float(instance_index * 4, width)
 
 		&"shape_color":
@@ -128,7 +129,7 @@ func _set_parameter(
 			param.encode_float(instance_index * 16 + 12, color.a)
 
 		&"shape_smoothing":
-			param.encode_float(instance_index * 4, smoothing / _get_width() as float)
+			param.encode_float(instance_index * 4, smoothing / _get_side_length() as float)
 
 		&"draw_mode_data":
 			var draw_mode_data:= Vector3()

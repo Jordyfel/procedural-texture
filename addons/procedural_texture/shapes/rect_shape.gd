@@ -47,9 +47,5 @@ func _get_name() -> String:
 	return "Rectangle"
 
 
-func _get_height() -> int:
-	return ceil(max(rect.x, rect.y))
-
-
-func _get_width() -> int:
+func _get_side_length() -> int:
 	return ceil(max(rect.x, rect.y))

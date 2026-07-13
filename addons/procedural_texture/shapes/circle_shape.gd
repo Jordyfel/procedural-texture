@@ -16,9 +16,5 @@ func _get_name() -> String:
 	return "Circle"
 
 
-func _get_height() -> int:
-	return ceil(radius * 2)
-
-
-func _get_width() -> int:
+func _get_side_length() -> int:
 	return ceil(radius * 2)
