@@ -60,7 +60,6 @@ func _initialize() -> void:
 	)
 
 	for node in root_node.children:
-		node.texture_size = Vector2(width, height)
 		node.instance_count_changed.connect(_on_node_instance_count_changed)
 		node.material_parameters_changed.connect(_on_node_material_parameter_changed)
 		instance_count += node.instance_count
@@ -89,7 +88,6 @@ func add_shape(shape: TextureNodeShape.Shape) -> String:
 		push_error("Maximum instance count of " + str(MAX_INSTANCE_COUNT) + " exceeded.")
 		return ""
 
-	new_node.texture_size = Vector2(width, height)
 	new_node.instance_count_changed.connect(_on_node_instance_count_changed)
 	new_node.material_parameters_changed.connect(_on_node_material_parameter_changed)
 	instance_count += new_node.instance_count
@@ -135,9 +133,6 @@ func _redraw() -> void:
 func _on_size_changed() -> void:
 	if not initialized:
 		return
-
-	for node in root_node.children:
-		node.texture_size = Vector2(width, height)
 
 	var bg:= Oklab.linear_to_oklab(background_color.srgb_to_linear())
 	var new_texture:= RenderingServer.texture_drawable_create(
@@ -189,6 +184,7 @@ func _set_material_parameter(param_name: StringName) -> void:
 	var instance_index:= 0
 	# If a node has both a fill and outline, they are split in 2 instances.
 	var second_instance:= false
+	var size:= Vector2(width, height)
 	# Gradient and shape data are passed as slices.
 	var slice_accums: Dictionary[StringName, int] = {}
 	while(node_index >= 0 or second_instance):
@@ -202,7 +198,7 @@ func _set_material_parameter(param_name: StringName) -> void:
 			node_index -= 1
 			node = root_node.children[node_index]
 
-		node._set_parameter(param_name, param, instance_index, second_instance, slice_accums)
+		node._set_parameter(param_name, param, instance_index, second_instance, size, slice_accums)
 
 		if not second_instance:
 			if node.fill_enabled and node.outline_enabled:

@@ -118,9 +118,10 @@ func _set_parameter(
 	param: PackedByteArray,
 	instance_index: int,
 	second_instance: bool,
+	texture_size: Vector2,
 	slice_accums: Dictionary[StringName, int]
 ) -> void:
-	super(param_name, param, instance_index, second_instance, slice_accums)
+	super(param_name, param, instance_index, second_instance, texture_size, slice_accums)
 	match param_name:
 		&"shape":
 			var shape:= _get_shape() as int

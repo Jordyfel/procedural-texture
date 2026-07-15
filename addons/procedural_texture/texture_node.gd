@@ -17,8 +17,6 @@ signal material_parameters_changed(param_names: Array)
 
 @export_storage var children: Array[TextureNode]
 
-var texture_size: Vector2
-
 var instance_count:= 0
 
 
@@ -27,6 +25,7 @@ func _set_parameter(
 	param: PackedByteArray,
 	instance_index: int,
 	_second_instance: bool,
+	_texture_size: Vector2,
 	_slice_accums: Dictionary[StringName, int]
 ) -> void:
 	match param_name:
