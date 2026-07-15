@@ -5,7 +5,7 @@ extends TextureNode
 enum Shape {CIRCLE, RECTANGLE}
 
 # Keep in sync with constants in shape.gdshaderinc.
-enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT, GRADIENT_2D}
+enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT}
 
 @export_group("Outline", "outline")
 @export_custom(PROPERTY_HINT_GROUP_ENABLE,"") var outline_enabled:= false:
@@ -144,7 +144,7 @@ func _set_parameter(
 
 		&"shape_draw_mode":
 			# TODO: Rework outline mode data.
-			var draw_mode:= 5 if not fill_enabled or second_instance else fill_mode
+			var draw_mode:= 4 if not fill_enabled or second_instance else fill_mode
 			param.encode_s32(instance_index * 4, draw_mode)
 
 		&"shape_outline_width":
@@ -223,17 +223,6 @@ func _set_parameter(
 			for i in stops.size():
 				param.encode_float(first_stop * 4 + i * 4, stops[i])
 			slice_accums[&"stop_count"] = first_stop + stops.size()
-
-		&"gradient_stop_origins":
-			if second_instance:
-				return
-
-			var first_stop: int = slice_accums.get_or_add(&"stop_count", 0)
-			var stop_origins:= gradient.get_stop_origins()
-			for i in stop_origins.size():
-				param.encode_float(first_stop * 8 + i * 4, stop_origins[i])
-			@warning_ignore("integer_division")
-			slice_accums[&"stop_count"] = first_stop + stop_origins.size() / 2
 
 
 func _get_shape() -> Shape:

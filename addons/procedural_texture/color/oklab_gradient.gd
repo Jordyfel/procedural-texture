@@ -22,12 +22,3 @@ func get_stops() -> PackedFloat32Array:
 		stops_.push_back(stop.stop)
 
 	return stops_
-
-
-func get_stop_origins() -> PackedFloat32Array:
-	var stop_origins:= PackedFloat32Array()
-	for stop in stops:
-		stop_origins.push_back(stop.stop_origin.x)
-		stop_origins.push_back(stop.stop_origin.y)
-
-	return stop_origins

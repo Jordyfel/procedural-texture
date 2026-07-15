@@ -15,8 +15,7 @@ const int MODE_SOLID_COLOR = 0;                             // TextureNodeShape.
 const int MODE_DISTANCE_GRADIENT = 1;
 const int MODE_LINEAR_GRADIENT = 2;
 const int MODE_RADIAL_GRADIENT = 3;
-const int MODE_GRADIENT_2D = 4;
-const int MODE_OUTLINE_SOLID_COLOR = 5;
+const int MODE_OUTLINE_SOLID_COLOR = 4;
 
 const float EDGE_OFFSET = 0.01;
 
@@ -47,7 +46,6 @@ uniform int gradient_first_stop[MAX_INSTANCE_COUNT];           // Gradients slic
 uniform int gradient_stop_count[MAX_INSTANCE_COUNT];
 uniform vec4 gradient_colors[MAX_INSTANCE_COUNT * AVG_STOPS];
 uniform float gradient_stops[MAX_INSTANCE_COUNT * AVG_STOPS];  // Or weights for 2D gradients.
-uniform vec2 gradient_stop_origins[MAX_INSTANCE_COUNT * AVG_STOPS];
 
 
 vec3 linear_to_srgb(vec3 color) {
@@ -126,9 +124,6 @@ vec4 make_fill_color(vec2 uv, int index, float gradient, float offset) {
 			float radial_sd = length(uv - origin) - radius;
 			float radial_gradient = max(-radial_sd * 2.0, 0.0);
 			color = fill_gradient(index, radial_gradient);
-			break;
-		case MODE_GRADIENT_2D:
-			// TODO
 			break;
 	}
 
