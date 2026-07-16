@@ -54,10 +54,8 @@ vec3 linear_to_srgb(vec3 color) {
 			lessThan(color.rgb, vec3(0.0031308f)));
 }
 
-vec4 blend(vec4 src, vec4 dst) {
-	float a = src.a + dst.a * (1.0 - src.a);
-	vec3 rgb = vec3(src.rgb * src.a + dst.rgb * dst.a * (1.0 - src.a));
-	return vec4(rgb / a, a);
+vec4 blend_premult_alpha(vec4 src, vec4 dst) {
+	return vec4(vec3(src.rgb + dst.rgb * (1.0 - src.a)), src.a + dst.a * (1.0 - src.a));
 }
 
 float outline_mask(float gradient, float width, float smoothing, float offset) {
@@ -127,7 +125,7 @@ vec4 make_fill_color(vec2 uv, int index, float gradient, float offset) {
 			break;
 	}
 
-	color.a *= fill_mask(gradient, shape_smoothing[index], offset);
+	color *= fill_mask(gradient, shape_smoothing[index], offset);
 	return color;
 }
 
@@ -179,7 +177,7 @@ vec4 draw_shape(vec2 uv, int index) {
 	if (shape_draw_mode[index] == MODE_OUTLINE_SOLID_COLOR) {
 		color = shape_color[index];
 		float width = shape_outline_width[index];
-		color.a *= outline_mask(gradient, width , shape_smoothing[index], EDGE_OFFSET);
+		color *= outline_mask(gradient, width , shape_smoothing[index], EDGE_OFFSET);
 	} else {
 		color = make_fill_color(uv, index, gradient, EDGE_OFFSET);
 	}
@@ -193,9 +191,10 @@ void blit() {
 	int count = min(shape_count, MAX_INSTANCE_COUNT);
 	for (int index = 0; index < count; index++) {
 		vec4 new_color = draw_shape(UV, index);
-		color = blend(new_color, color);
+		color = blend_premult_alpha(new_color, color);
 	}
 
+	color.rgb /= color.a;
 	color.rgb = oklab_to_linear(color.rgb);
 	color.rgb = linear_to_srgb(color.rgb);
 

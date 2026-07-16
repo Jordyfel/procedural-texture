@@ -8,9 +8,9 @@ func get_colors() -> PackedFloat32Array:
 	var colors:= PackedFloat32Array()
 	for stop in stops:
 		var oklab:= Oklab.oklch_to_oklab(Color(stop.l, stop.c, stop.h, stop.a))
-		colors.push_back(oklab.r)
-		colors.push_back(oklab.g)
-		colors.push_back(oklab.b)
+		colors.push_back(oklab.r * oklab.a)
+		colors.push_back(oklab.g * oklab.a)
+		colors.push_back(oklab.b * oklab.a)
 		colors.push_back(oklab.a)
 
 	return colors

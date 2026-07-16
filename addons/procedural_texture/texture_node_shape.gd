@@ -155,9 +155,9 @@ func _set_parameter(
 		&"shape_color":
 			var color := outline_color if not fill_enabled or second_instance else fill_color
 			color = Oklab.linear_to_oklab(color.srgb_to_linear())
-			param.encode_float(instance_index * 16 + 0, color.r)
-			param.encode_float(instance_index * 16 + 4, color.g)
-			param.encode_float(instance_index * 16 + 8, color.b)
+			param.encode_float(instance_index * 16 + 0, color.r * color.a)
+			param.encode_float(instance_index * 16 + 4, color.g * color.a)
+			param.encode_float(instance_index * 16 + 8, color.b * color.a)
 			param.encode_float(instance_index * 16 + 12, color.a)
 
 		&"shape_smoothing":
