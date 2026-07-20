@@ -10,6 +10,7 @@ const int AVG_STOPS = 4;
 
 const int SHAPE_CIRCLE = 0;                                 // TextureNodeShape.Shape
 const int SHAPE_RECTANGLE = 1;
+const int SHAPE_RHOMBUS = 2;
 
 const int MODE_SOLID_COLOR = 0;                             // TextureNodeShape.FillMode
 const int MODE_DISTANCE_GRADIENT = 1;
@@ -134,15 +135,19 @@ float get_shape_signed_distance(vec2 uv, int index) {
 	float scale = 1.0 + shape_rounding[index] * 2.0;
 	p *= vec2(scale);
 
+	int data_start = shape_data_start[index];
 	float sd;
 	switch (shape[index]) {
 		case SHAPE_CIRCLE:
 			sd = sdCircle(p, 0.5);
 			break;
 		case SHAPE_RECTANGLE:
-			int rect_data_start = shape_data_start[index];
-			vec2 b = vec2(shape_data[rect_data_start], shape_data[rect_data_start + 1]);
+			vec2 b = vec2(shape_data[data_start], shape_data[data_start + 1]);
 			sd = sdBox(p, b);
+			break;
+		case SHAPE_RHOMBUS:
+			vec2 b = vec2(shape_data[data_start], shape_data[data_start + 1]);
+			sd = sdRhombus(p, b);
 			break;
 	}
 
