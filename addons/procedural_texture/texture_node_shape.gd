@@ -2,7 +2,7 @@
 @abstract class_name TextureNodeShape
 extends TextureNode
 
-enum Shape {CIRCLE, RECTANGLE, RHOMBUS}
+enum Shape {CIRCLE, RECTANGLE, RHOMBUS, ISOSCALES_TRAPEZOID}
 
 # Keep in sync with constants in shape.gdshaderinc.
 enum FillMode {SOLID_COLOR, DISTANCE_GRADIENT, LINEAR_GRADIENT, RADIAL_GRADIENT}
@@ -103,6 +103,8 @@ static func create(shape: Shape) -> TextureNodeShape:
 			new_shape = RectShape.new()
 		Shape.RHOMBUS:
 			new_shape = RhombusShape.new()
+		Shape.ISOSCALES_TRAPEZOID:
+			new_shape = IsoscalesTrapezoidShape.new()
 		_:
 			new_shape = CircleShape.new()
 

@@ -30,13 +30,15 @@ text = "Add"
 unique_name_in_owner = true
 layout_mode = 2
 selected = 0
-item_count = 3
+item_count = 4
 popup/item_0/text = "Circle"
 popup/item_0/id = 0
 popup/item_1/text = "Rectangle"
 popup/item_1/id = 1
 popup/item_2/text = "Rhombus"
 popup/item_2/id = 2
+popup/item_3/text = "Isoscales Trapezoid"
+popup/item_3/id = 3
 
 [node name="RemoveButton" type="Button" parent="HBoxContainer/HBoxContainer/VBoxContainer" unique_id=50119004]
 unique_name_in_owner = true
