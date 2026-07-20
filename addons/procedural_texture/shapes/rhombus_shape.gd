@@ -26,7 +26,7 @@ func _set_parameter(
 			var uv_rect: Vector2 = rect / max(rect.x, rect.y) / 2
 			param.encode_float(data_start * 4 + 0, uv_rect.x)
 			param.encode_float(data_start * 4 + 4, uv_rect.y)
-			slice_accums[&"shape_data_count"] = data_start + 2
+			slice_accums[&"shape_data_count"] = data_start + _get_shape_data_float_count()
 
 
 func _get_shape() -> Shape:

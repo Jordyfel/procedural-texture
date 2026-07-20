@@ -37,7 +37,7 @@ func _set_parameter(
 			param.encode_float(data_start * 4 + 0, top_length / 2 / side_length)
 			param.encode_float(data_start * 4 + 4, bottom_length / 2 / side_length)
 			param.encode_float(data_start * 4 + 8, height / side_length)
-			slice_accums[&"shape_data_count"] = data_start + 3
+			slice_accums[&"shape_data_count"] = data_start + _get_shape_data_float_count()
 
 
 func _get_shape() -> Shape:
