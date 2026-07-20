@@ -18,8 +18,6 @@ func _set_parameter(
 ) -> void:
 	super(param_name, param, instance_index, second_instance, texture_size, slice_accums)
 	match param_name:
-
-
 		&"shape_data":
 			if second_instance:
 				return
