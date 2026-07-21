@@ -12,6 +12,7 @@ const int SHAPE_CIRCLE = 0;                                 // TextureNodeShape.
 const int SHAPE_RECTANGLE = 1;
 const int SHAPE_RHOMBUS = 2;
 const int SHAPE_ISOSCALES_TRAPEZOID = 3;
+const int SHAPE_PARALLELOGRAM = 4;
 
 const int MODE_SOLID_COLOR = 0;                             // TextureNodeShape.FillMode
 const int MODE_DISTANCE_GRADIENT = 1;
@@ -155,6 +156,12 @@ float get_shape_signed_distance(vec2 uv, int index) {
 			float r2 = shape_data[data_start + 1];
 			float he = shape_data[data_start + 2];
 			sd = sdTrapezoid(p, r1, r2, he);
+			break;
+		case SHAPE_PARALLELOGRAM:
+			float wi = shape_data[data_start];
+			float he = shape_data[data_start + 1];
+			float sk = shape_data[data_start + 2];
+			sd = sdParallelogram(p, wi, he, sk);
 			break;
 	}
 
