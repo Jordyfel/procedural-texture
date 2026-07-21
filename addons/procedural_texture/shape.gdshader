@@ -13,6 +13,7 @@ const int SHAPE_RECTANGLE = 1;
 const int SHAPE_RHOMBUS = 2;
 const int SHAPE_ISOSCALES_TRAPEZOID = 3;
 const int SHAPE_PARALLELOGRAM = 4;
+const int SHAPE_EQUILATERAL_TRIANGLE = 5;
 
 const int MODE_SOLID_COLOR = 0;                             // TextureNodeShape.FillMode
 const int MODE_DISTANCE_GRADIENT = 1;
@@ -162,6 +163,9 @@ float get_shape_signed_distance(vec2 uv, int index) {
 			float he = shape_data[data_start + 1];
 			float sk = shape_data[data_start + 2];
 			sd = sdParallelogram(p, wi, he, sk);
+			break;
+		case SHAPE_EQUILATERAL_TRIANGLE:
+			sd = sdEquilateralTriangle(p, 0.5);
 			break;
 	}
 
