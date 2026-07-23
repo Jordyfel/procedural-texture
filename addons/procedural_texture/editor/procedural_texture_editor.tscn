@@ -30,6 +30,7 @@ text = "Add"
 unique_name_in_owner = true
 layout_mode = 2
 selected = 0
+search_bar_enabled = true
 item_count = 6
 popup/item_0/text = "Circle"
 popup/item_0/id = 0
